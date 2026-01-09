@@ -56,13 +56,13 @@ export default function TransactionsPage() {
   }, []);
 
   const form = useForm<TransactionInput>({
-    resolver: zodResolver(transactionSchema) as any,
+    resolver: zodResolver(transactionSchema),
     defaultValues: {
       amount: 0,
       title: "",
       type: "EXPENSE",
       category: "Food & Dining",
-      date: new Date(),
+      date: "",
     }
   });
 
