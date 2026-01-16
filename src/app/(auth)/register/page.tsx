@@ -19,12 +19,14 @@ import api from "@/lib/api";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ApiResponse } from "@/types";
-import { Wallet, User, Mail, Lock, ShieldCheck, Loader2, CheckCircle2 } from "lucide-react";
+import { Wallet, User, Mail, Lock, ShieldCheck, Loader2, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [passwordStrength, setPasswordStrength] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const form = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
@@ -38,13 +40,21 @@ export default function RegisterPage() {
 
   // Password strength checker
   const checkPasswordStrength = (password: string) => {
-    let strength = 0;
-    if (password.length >= 8) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[a-z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
-    setPasswordStrength(strength);
+    // 1. กำหนดเกณฑ์การตรวจสอบ (Criteria) เป็นรายการเงื่อนไข Boolean
+    const criteria = [
+      password.length >= 8,           // ความยาวอย่างน้อย 8 ตัวอักษร
+      /[A-Z]/.test(password),        // มีตัวอักษรพิมพ์ใหญ่ (A-Z)
+      /[a-z]/.test(password),        // มีตัวอักษรพิมพ์เล็ก (a-z)
+      /[0-9]/.test(password),        // มีตัวเลข (0-9)
+      /[^A-Za-z0-9]/.test(password), // มีอักขระพิเศษ (เช่น !@#$%^&*)
+    ];
+
+    // 2. กรองเอาเฉพาะเงื่อนไขที่ผ่าน (true) และนับจำนวนเพื่อเป็นคะแนนความแข็งแกร่ง (0-5)
+    // การใช้ filter(Boolean) ช่วยให้โค้ดกระชับและอ่านง่ายกว่าการใช้ if-else หลายตัว
+    const score = criteria.filter(Boolean).length;
+
+    // 3. อัปเดตสถานะความแข็งแกร่งเพื่อนำไปแสดงผลสีและข้อความแจ้งเตือนใน UI
+    setPasswordStrength(score);
   };
 
   const getStrengthColor = () => {
@@ -56,11 +66,11 @@ export default function RegisterPage() {
   };
 
   const getStrengthText = () => {
-    if (passwordStrength <= 1) return "อ่อนมาก";
-    if (passwordStrength <= 2) return "อ่อน";
+    if (passwordStrength <= 1) return "คาดเดาง่ายมาก";
+    if (passwordStrength <= 2) return "คาดเดาง่าย";
     if (passwordStrength <= 3) return "ปานกลาง";
-    if (passwordStrength <= 4) return "แข็งแรง";
-    return "แข็งแรงมาก";
+    if (passwordStrength <= 4) return "รัดกุม";
+    return "รัดกุมมาก";
   };
 
   async function onSubmit(data: RegisterInput) {
@@ -160,7 +170,7 @@ export default function RegisterPage() {
                       <div className="relative group">
                         <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 transition-colors group-focus-within:text-indigo-500" />
                         <Input 
-                          type="password" 
+                          type={showPassword ? "text" : "password"}
                           placeholder="••••••••" 
                           className="pl-10 h-11 bg-gray-50/50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500/20 transition-all" 
                           {...field}
@@ -169,6 +179,17 @@ export default function RegisterPage() {
                             checkPasswordStrength(e.target.value);
                           }}
                         />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-2.5 text-gray-400 hover:text-indigo-500 transition-colors"
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-5 w-5" />
+                          ) : (
+                            <Eye className="h-5 w-5" />
+                          )}
+                        </button>
                       </div>
                     </FormControl>
                     {/* Password strength indicator */}
@@ -185,7 +206,7 @@ export default function RegisterPage() {
                           ))}
                         </div>
                         <p className={`text-xs ${passwordStrength >= 4 ? 'text-emerald-600' : 'text-muted-foreground'}`}>
-                          ความแข็งแรง: {getStrengthText()}
+                          ความคาดเดาง่าย: {getStrengthText()}
                         </p>
                       </div>
                     )}
@@ -203,11 +224,22 @@ export default function RegisterPage() {
                        <div className="relative group">
                         <ShieldCheck className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 transition-colors group-focus-within:text-indigo-500" />
                         <Input 
-                          type="password" 
+                          type={showConfirmPassword ? "text" : "password"}
                           placeholder="••••••••" 
                           className="pl-10 h-11 bg-gray-50/50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500/20 transition-all" 
                           {...field} 
                         />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute right-3 top-2.5 text-gray-400 hover:text-indigo-500 transition-colors"
+                        >
+                          {showConfirmPassword ? (
+                            <EyeOff className="h-5 w-5" />
+                          ) : (
+                            <Eye className="h-5 w-5" />
+                          )}
+                        </button>
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -220,7 +252,7 @@ export default function RegisterPage() {
               </label>
               <Button 
                 type="submit" 
-                className="w-full h-12 text-base font-semibold bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/30 active:scale-[0.98]" 
+                className="w-full h-12 text-base font-semibold text-white bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/30 active:scale-[0.98]" 
                 disabled={form.formState.isSubmitting}
               >
                 {form.formState.isSubmitting ? (

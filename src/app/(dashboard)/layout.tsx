@@ -78,21 +78,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 href={item.href}
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200",
+                  "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50",
                   isActive 
                     ? "bg-gradient-to-r from-indigo-50 to-violet-50 text-indigo-600 shadow-sm" 
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                    : "text-gray-600 hover:bg-indigo-100 hover:text-indigo-700"
                 )}
               >
                 <div className={cn(
                   "flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200",
                   isActive 
                     ? "bg-gradient-to-br from-indigo-500 to-violet-600 shadow-md shadow-indigo-500/20" 
-                    : "bg-gray-100 group-hover:bg-gray-200"
+                    : "bg-gray-100 group-hover:bg-indigo-200"
                 )}>
                   <item.icon className={cn(
                     "h-5 w-5 transition-colors",
-                    isActive ? "text-white" : "text-gray-500 group-hover:text-gray-700"
+                    isActive ? "text-white" : "text-gray-500 group-hover:text-indigo-700"
                   )} />
                 </div>
                 <span className="flex-1">{item.title}</span>
@@ -155,21 +155,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     key={index}
                     href={item.href}
                     className={cn(
-                      "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200",
+                      "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50",
                       isActive 
                         ? "bg-gradient-to-r from-indigo-50 to-violet-50 text-indigo-600 shadow-sm" 
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                        : "text-gray-600 hover:bg-indigo-100 hover:text-indigo-700"
                     )}
                   >
                     <div className={cn(
                       "flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200",
                       isActive 
                         ? "bg-gradient-to-br from-indigo-500 to-violet-600 shadow-md shadow-indigo-500/20" 
-                        : "bg-gray-100 group-hover:bg-gray-200"
+                        : "bg-gray-100 group-hover:bg-indigo-200"
                     )}>
                       <item.icon className={cn(
                         "h-5 w-5 transition-colors",
-                        isActive ? "text-white" : "text-gray-500 group-hover:text-gray-700"
+                        isActive ? "text-white" : "text-gray-500 group-hover:text-indigo-700"
                       )} />
                     </div>
                     <span className="flex-1">{item.title}</span>
@@ -241,21 +241,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         href={item.href}
                         onClick={() => setOpen(false)}
                         className={cn(
-                          "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200",
+                          "group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50",
                           isActive 
                             ? "bg-gradient-to-r from-indigo-50 to-violet-50 text-indigo-600 shadow-sm" 
-                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                            : "text-gray-600 hover:bg-indigo-100 hover:text-indigo-700"
                         )}
                       >
                         <div className={cn(
                           "flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200",
                           isActive 
                             ? "bg-gradient-to-br from-indigo-500 to-violet-600 shadow-md shadow-indigo-500/20" 
-                            : "bg-gray-100 group-hover:bg-gray-200"
+                            : "bg-gray-100 group-hover:bg-indigo-200"
                         )}>
                           <item.icon className={cn(
                             "h-5 w-5 transition-colors",
-                            isActive ? "text-white" : "text-gray-500 group-hover:text-gray-700"
+                            isActive ? "text-white" : "text-gray-500 group-hover:text-indigo-700"
                           )} />
                         </div>
                         <span className="flex-1">{item.title}</span>
