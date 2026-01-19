@@ -4,22 +4,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, PieChartIcon } from 'lucide-react';
 
-// Mock data (since API doesn't provide this yet)
-const pieData = [
-  { name: 'อาหาร', value: 400 },
-  { name: 'เดินทาง', value: 300 },
-  { name: 'ช้อปปิ้ง', value: 300 },
-  { name: 'ค่าใช้จ่าย', value: 200 },
-];
 
-const barData = [
-  { name: 'ม.ค.', income: 4000, expense: 2400 },
-  { name: 'ก.พ.', income: 3000, expense: 1398 },
-  { name: 'มี.ค.', income: 2000, expense: 9800 },
-  { name: 'เม.ย.', income: 2780, expense: 3908 },
-  { name: 'พ.ค.', income: 1890, expense: 4800 },
-  { name: 'มิ.ย.', income: 2390, expense: 3800 },
-];
 
 // Theme-consistent colors (Indigo/Violet palette)
 const COLORS = ['#6366f1', '#8b5cf6', '#a855f7', '#c084fc'];
@@ -32,8 +17,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         <p className="font-semibold text-gray-900 mb-2">{label}</p>
         {payload.map((entry: any, index: number) => (
           <div key={index} className="flex items-center gap-2 text-sm">
-            <div 
-              className="w-3 h-3 rounded-full" 
+            <div
+              className="w-3 h-3 rounded-full"
               style={{ backgroundColor: entry.color }}
             />
             <span className="text-gray-600">{entry.name}:</span>
@@ -46,7 +31,12 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export function OverviewCharts() {
+export interface OverviewChartsProps {
+  pieData?: { name: string; value: number }[];
+  barData?: { name: string; income: number; expense: number }[];
+}
+
+export function OverviewCharts({ pieData = [], barData = [] }: OverviewChartsProps) {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
       {/* Bar Chart - Income vs Expense */}
@@ -76,35 +66,35 @@ export function OverviewCharts() {
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-              <XAxis 
-                dataKey="name" 
-                axisLine={false} 
+              <XAxis
+                dataKey="name"
+                axisLine={false}
                 tickLine={false}
                 tick={{ fill: '#64748b', fontSize: 12 }}
               />
-              <YAxis 
-                axisLine={false} 
+              <YAxis
+                axisLine={false}
                 tickLine={false}
                 tick={{ fill: '#64748b', fontSize: 12 }}
-                tickFormatter={(value) => `฿${(value/1000).toFixed(0)}k`}
+                tickFormatter={(value) => `฿${(value / 1000).toFixed(0)}k`}
               />
               <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(99, 102, 241, 0.1)' }} />
-              <Legend 
+              <Legend
                 wrapperStyle={{ paddingTop: 20 }}
                 formatter={(value) => <span className="text-gray-600 text-sm">{value}</span>}
               />
-              <Bar 
-                dataKey="income" 
-                name="รายรับ" 
-                fill="url(#incomeGradient)" 
-                radius={[8, 8, 0, 0]} 
+              <Bar
+                dataKey="income"
+                name="รายรับ"
+                fill="url(#incomeGradient)"
+                radius={[8, 8, 0, 0]}
                 maxBarSize={40}
               />
-              <Bar 
-                dataKey="expense" 
-                name="รายจ่าย" 
-                fill="url(#expenseGradient)" 
-                radius={[8, 8, 0, 0]} 
+              <Bar
+                dataKey="expense"
+                name="รายจ่าย"
+                fill="url(#expenseGradient)"
+                radius={[8, 8, 0, 0]}
                 maxBarSize={40}
               />
             </BarChart>
@@ -147,16 +137,16 @@ export function OverviewCharts() {
                 strokeWidth={0}
               >
                 {pieData.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`} 
+                  <Cell
+                    key={`cell-${index}`}
                     fill={`url(#pieGradient${index % COLORS.length})`}
                     className="transition-all duration-300 hover:opacity-80"
                   />
                 ))}
               </Pie>
               <Tooltip content={<CustomTooltip />} />
-              <Legend 
-                verticalAlign="bottom" 
+              <Legend
+                verticalAlign="bottom"
                 height={50}
                 formatter={(value) => <span className="text-gray-600 text-sm">{value}</span>}
               />

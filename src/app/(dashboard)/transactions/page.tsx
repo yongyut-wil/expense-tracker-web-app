@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { fetcher } from "@/lib/api";
 import { Transaction, ApiResponse } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { CalendarIcon } from "lucide-react";
 import { getCategoryConfig, EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "@/lib/categories";
 import { Search, Filter, SlidersHorizontal } from "lucide-react";
 import { 
@@ -28,7 +35,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TransactionInput, transactionSchema } from "@/lib/validations/transaction";
 import api from "@/lib/api";
@@ -62,7 +69,7 @@ export default function TransactionsPage() {
       title: "",
       type: "EXPENSE",
       category: "Food & Dining",
-      date: "",
+      date: new Date().toISOString(),
     }
   });
 
@@ -89,20 +96,28 @@ export default function TransactionsPage() {
 
   async function onSubmit(data: TransactionInput) {
       try {
-        const response = await api.post<ApiResponse<Transaction>>("/transactions", {
+        const payload = {
           ...data,
           type: selectedType,
-        });
+        };
+        console.log("Submitting transaction:", payload);
+        
+        const response = await api.post<ApiResponse<Transaction>>("/transactions", payload);
         if (response.data.success) {
            toast.success("บันทึกรายการสำเร็จ");
            setTransactions([response.data.data!, ...transactions]);
            setIsDialogOpen(false);
            form.reset();
         } else {
+           console.error("API Error:", response.data.error);
            toast.error(response.data.error?.message || "Failed to create transaction");
         }
-      } catch (error) {
-        toast.error("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+      } catch (error: any) {
+        console.error("Request failed:", error.response?.data || error.message);
+        const errorMessage = error.response?.data?.error?.message 
+          || error.response?.data?.message 
+          || "เกิดข้อผิดพลาดในการบันทึกข้อมูล";
+        toast.error(errorMessage);
       }
   }
 
@@ -111,16 +126,16 @@ export default function TransactionsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
             รายการธุรกรรม
           </h2>
-          <p className="text-muted-foreground mt-1">จัดการรายรับ-รายจ่ายของคุณ</p>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">จัดการรายรับ-รายจ่ายของคุณ</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2 shadow-lg shadow-indigo-500/20 bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 transition-all duration-300">
+            <Button className="gap-2 w-full sm:w-auto text-white shadow-lg shadow-indigo-500/20 bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 transition-all duration-300">
                 <PlusIcon className="h-4 w-4" /> เพิ่มรายการ
             </Button>
           </DialogTrigger>
@@ -162,7 +177,7 @@ export default function TransactionsPage() {
                 <Label htmlFor="title" className="text-gray-700">รายละเอียด</Label>
                 <Input 
                   id="title" 
-                  placeholder="เช่น ค่าอาหารกลางวัน" 
+                  placeholder={ selectedType === "EXPENSE" ? "เช่น ค่าอาหารกลางวัน" : "เช่น เงินเดือน"} 
                   className="h-11"
                   {...form.register("title")} 
                 />
@@ -179,14 +194,61 @@ export default function TransactionsPage() {
                   <Input 
                     type="number" 
                     id="amount" 
+                    min="0"
                     placeholder="0.00" 
                     className="pl-8 h-11 text-lg font-semibold"
-                    {...form.register("amount")} 
+                    {...form.register("amount", { valueAsNumber: true })} 
                   />
                 </div>
                 {form.formState.errors.amount && (
                   <p className="text-xs text-red-500">{form.formState.errors.amount.message}</p>
                 )}
+              </div>
+
+              {/* Date Picker */}
+              <div className="space-y-2">
+                 <Label className="text-gray-700">วันที่</Label>
+                 <Controller
+                    control={form.control}
+                    name="date"
+                    render={({ field }) => {
+                      const [isCalendarOpen, setIsCalendarOpen] = React.useState(false);
+                      return (
+                      <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full h-11 pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value ? (
+                              format(new Date(field.value), "dd MMM yyyy", { locale: th })
+                            ) : (
+                              <span>เลือกวันที่</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <CalendarComponent
+                            mode="single"
+                            selected={field.value ? new Date(field.value) : undefined}
+                            onSelect={(date) => {
+                              field.onChange(date?.toISOString());
+                              setIsCalendarOpen(false);
+                            }}
+                            disabled={(date: Date) => date > new Date() || date < new Date("1900-01-01")}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    );}}
+                  />
+                 {form.formState.errors.date && (
+                    <p className="text-xs text-red-500">{form.formState.errors.date.message}</p>
+                 )}
               </div>
 
               {/* Category */}
@@ -219,7 +281,7 @@ export default function TransactionsPage() {
 
               <Button 
                 type="submit" 
-                className="w-full h-12 text-base font-semibold bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 shadow-lg shadow-indigo-500/25"
+                className="w-full h-12 text-base text-white font-semibold bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 shadow-lg shadow-indigo-500/25"
                 disabled={form.formState.isSubmitting}
               >
                 {form.formState.isSubmitting ? "กำลังบันทึก..." : "บันทึกรายการ"}
@@ -298,7 +360,7 @@ export default function TransactionsPage() {
                 </p>
                 <Button 
                   onClick={() => setIsDialogOpen(true)}
-                  className="gap-2 bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 shadow-lg shadow-indigo-500/20"
+                  className="gap-2 bg-gradient-to-r text-white from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 shadow-lg shadow-indigo-500/20"
                 >
                   <PlusIcon className="h-4 w-4" />
                   เริ่มบันทึกรายการ
@@ -312,30 +374,34 @@ export default function TransactionsPage() {
                     return (
                     <div 
                       key={tx.id} 
-                      className="group flex items-center justify-between p-4 transition-all duration-200 hover:bg-gray-50/80"
+                      className="group flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 gap-3 sm:gap-4 transition-all duration-200 hover:bg-gray-50/80"
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
                             <div className={cn(
-                                "flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-200 group-hover:scale-105",
+                                "flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl transition-all duration-200 group-hover:scale-105",
                                 categoryConfig.bg,
                                 categoryConfig.color
                             )}>
-                                <Icon className="h-5 w-5" />
+                                <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                             </div>
-                            <div>
-                                <p className="font-medium text-gray-900">{tx.title}</p>
-                                <div className="flex items-center gap-2 text-sm text-gray-500">
-                                  <Calendar className="h-3.5 w-3.5" />
-                                  <span>{format(new Date(tx.date), "dd MMM yyyy", { locale: th })}</span>
-                                  <span className="text-gray-300">•</span>
-                                  <Tag className="h-3.5 w-3.5" />
-                                  <span>{tx.category}</span>
+                            <div className="flex-1 min-w-0">
+                                <p className="font-medium text-gray-900 truncate">{tx.title}</p>
+                                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm text-gray-500 mt-0.5">
+                                  <div className="flex items-center gap-1">
+                                    <Calendar className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                                    <span>{format(new Date(tx.date), "dd MMM yy", { locale: th })}</span>
+                                  </div>
+                                  <span className="text-gray-300 hidden sm:inline">•</span>
+                                  <div className="flex items-center gap-1">
+                                    <Tag className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                                    <span className="truncate max-w-[100px] sm:max-w-none">{tx.category}</span>
+                                  </div>
                                 </div>
                             </div>
                         </div>
                         <div className={cn(
-                          "text-lg font-bold transition-transform duration-200 group-hover:scale-105",
+                          "text-base sm:text-lg font-bold transition-transform duration-200 group-hover:scale-105 shrink-0 text-right sm:text-left",
                           tx.type === 'INCOME' ? 'text-emerald-600' : 'text-rose-600'
                         )}>
                             {tx.type === 'INCOME' ? '+' : '-'}{tx.amount.toLocaleString()} ฿

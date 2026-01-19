@@ -1,5 +1,6 @@
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { ApiResponse } from '@/types';
+import { toast } from 'sonner';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api',
@@ -15,6 +16,7 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
       config.headers.Authorization = `Bearer ${token}`;
     }
   }
+  console.log(`🚀 API Request: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`, config.data || '');
   return config;
 });
 
@@ -23,8 +25,18 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
        if (typeof window !== 'undefined') {
+        // Show toast notification before redirect
+        toast.error('เซสชั่นหมดอายุ กรุณาเข้าสู่ระบบใหม่', {
+          duration: 3000,
+        });
+        
+        // Clear token
         localStorage.removeItem('token');
-        window.location.href = '/login';
+        
+        // Small delay to let user see the toast
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 1500);
        }
     }
     return Promise.reject(error);

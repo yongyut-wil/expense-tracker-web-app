@@ -17,6 +17,8 @@ export interface User {
   id: number;
   email: string;
   name: string | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Transaction {
@@ -34,6 +36,12 @@ export interface DashboardData {
   totalExpense: number;
   balance: number;
   transactionCount: number;
+  previousMonthIncome: number;
+  previousMonthExpense: number;
+  incomeChange: number;
+  incomeChangePercent: number;
+  expenseChange: number;
+  expenseChangePercent: number;
 }
 
 export interface AuthResponse {

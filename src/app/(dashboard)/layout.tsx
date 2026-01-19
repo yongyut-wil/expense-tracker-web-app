@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useAuthStore } from "@/stores/auth-store";
 import { useRouter, usePathname } from "next/navigation";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { 
   LayoutDashboard, 
@@ -14,7 +14,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface NavItem {
   title: string;
@@ -38,9 +38,15 @@ const navItems: NavItem[] = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const logout = useAuthStore((state) => state.logout);
   const user = useAuthStore((state) => state.user);
+  const fetchUser = useAuthStore((state) => state.fetchUser);
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+
+  // Fetch user info on mount
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
   const handleLogout = () => {
     logout();
@@ -217,6 +223,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </Button>
             </SheetTrigger>
                       <SheetContent side="left" className="w-72 p-0 border-0">
+            {/* Accessibility: Hidden title for screen readers */}
+            <SheetTitle className="sr-only">เมนูนำทาง</SheetTitle>
+            <SheetDescription className="sr-only">เมนูนำทางหลักของแอปพลิเคชัน</SheetDescription>
             <div className="flex h-full flex-col">
               {/* Logo */}
               <div className="flex h-16 items-center border-b border-gray-100 px-6">
