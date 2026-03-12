@@ -4,6 +4,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, PieChartIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { getCategoryConfig } from '@/lib/categories';
 
 
 
@@ -18,6 +19,7 @@ export interface OverviewChartsProps {
 export function OverviewCharts({ pieData = [], barData = [] }: OverviewChartsProps) {
   const t = useTranslations("Dashboard");
   const tTrans = useTranslations("Transactions");
+  const tCat = useTranslations("Categories");
   const tCommon = useTranslations("Common");
 
   // Custom tooltip component
@@ -26,16 +28,22 @@ export function OverviewCharts({ pieData = [], barData = [] }: OverviewChartsPro
       return (
         <div className="bg-white/95 backdrop-blur-sm border border-gray-200 rounded-xl shadow-lg p-3">
           <p className="font-semibold text-gray-900 mb-2">{label}</p>
-          {payload.map((entry: any, index: number) => (
-            <div key={index} className="flex items-center gap-2 text-sm">
-              <div
-                className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: entry.color }}
-              />
-              <span className="text-gray-600">{entry.name}:</span>
-              <span className="font-semibold text-gray-900">{tCommon("thailandBaht")}{entry.value.toLocaleString()}</span>
-            </div>
-          ))}
+          {payload.map((entry: any, index: number) => {
+            // Determine if this is a pie chart entry (which has category IDs) or a bar chart entry
+            const isPieChart = entry.payload && entry.payload.name && !('income' in entry.payload);
+            const displayName = isPieChart ? tCat(entry.name as any) : entry.name;
+            
+            return (
+              <div key={index} className="flex items-center gap-2 text-sm">
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: entry.color }}
+                />
+                <span className="text-gray-600">{displayName}:</span>
+                <span className="font-semibold text-gray-900">{tCommon("thailandBaht")}{entry.value.toLocaleString()}</span>
+              </div>
+            );
+          })}
         </div>
       );
     }
@@ -139,6 +147,7 @@ export function OverviewCharts({ pieData = [], barData = [] }: OverviewChartsPro
                 outerRadius={100}
                 paddingAngle={4}
                 dataKey="value"
+                nameKey="name"
                 strokeWidth={0}
               >
                 {pieData.map((entry: any, index: number) => (
@@ -153,7 +162,13 @@ export function OverviewCharts({ pieData = [], barData = [] }: OverviewChartsPro
               <Legend
                 verticalAlign="bottom"
                 height={50}
-                formatter={(value) => <span className="text-gray-600 text-sm">{value}</span>}
+                formatter={(value) => {
+                  try {
+                    return <span className="text-gray-600 text-sm">{tCat(value as any)}</span>;
+                  } catch (e) {
+                    return <span className="text-gray-600 text-sm">{value}</span>;
+                  }
+                }}
               />
             </PieChart>
           </ResponsiveContainer>

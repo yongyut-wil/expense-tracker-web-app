@@ -14,6 +14,7 @@ import { th, enUS } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
 import { AnimatedNumber } from "@/components/ui/animated-number";
 import { useTranslations, useLocale } from "next-intl";
+import { getCategoryConfig } from "@/lib/categories";
 
 
 interface Transaction {
@@ -92,10 +93,14 @@ export default function DashboardPage() {
     transactions
       .filter(t => t.type === 'EXPENSE')
       .forEach(t => {
-        if (expensesByCategory[t.category]) {
-          expensesByCategory[t.category] += t.amount;
+        // Map raw database label to translation key via category config
+        const config = getCategoryConfig(t.category, t.type);
+        const transKey = config ? config.id : t.category;
+        
+        if (expensesByCategory[transKey]) {
+          expensesByCategory[transKey] += t.amount;
         } else {
-          expensesByCategory[t.category] = t.amount;
+          expensesByCategory[transKey] = t.amount;
         }
       });
 

@@ -45,7 +45,7 @@ api.interceptors.response.use(
 
         // Small delay to let user see the toast
         setTimeout(() => {
-          window.location.href = "/login";
+          window.location.href = isThai ? "/th/login" : "/en/login";
         }, 1500);
       }
     }
