@@ -38,9 +38,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       template: t("template"),
     },
     description: t("description"),
-    icons: {
-      icon: "/icon.png",
-    },
   };
 }
 
