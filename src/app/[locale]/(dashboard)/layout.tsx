@@ -130,7 +130,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* User Section */}
       <div className="mt-auto border-t border-gray-100 p-4">
-        <div className="mb-3 flex items-center gap-3 rounded-lg border border-border p-3">
+        <div className="mb-3 flex items-center gap-3 rounded-xl bg-gray-50 p-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
             {getInitials(user?.name ?? undefined)}
           </div>
@@ -154,10 +154,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="min-h-screen bg-gray-50/80">
       {/* Desktop Sidebar */}
-      <div className="hidden border-r border-border bg-background lg:fixed lg:inset-y-0 lg:flex lg:w-72 lg:flex-col">
+      <div className="hidden border-r border-gray-200/60 bg-background lg:fixed lg:inset-y-0 lg:flex lg:w-72 lg:flex-col">
         <div className="flex h-full flex-col">
           {/* Logo */}
-          <div className="flex h-16 items-center border-b border-border px-6">
+          <div className="flex h-16 items-center border-b border-gray-100 px-6">
             <Link href="/" className="flex items-center gap-3 font-bold text-xl">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-linear-to-br from-indigo-500 to-violet-600 shadow-md shadow-indigo-500/20">
                 <TrendingUp className="h-5 w-5 text-white" />
@@ -216,7 +216,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           {/* User Section */}
           <div className="mt-auto border-t border-gray-100 p-4">
-            <div className="mb-3 flex items-center gap-3 rounded-lg border border-border p-3">
+            <div className="mb-3 flex items-center gap-3 rounded-xl bg-gray-50 p-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
                 {getInitials(user?.name ?? undefined)}
               </div>
@@ -240,7 +240,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main Content */}
       <div className="flex flex-col lg:pl-72">
         {/* Mobile/Desktop Header */}
-        <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b border-border bg-background/80 backdrop-blur-md px-6">
+        <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b border-gray-200/60 bg-background/80 backdrop-blur-md px-6">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="lg:hidden hover:bg-gray-100 rounded-xl">
@@ -254,7 +254,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <SheetDescription className="sr-only">{tNav("menu")}</SheetDescription>
             <div className="flex h-full flex-col">
               {/* Logo */}
-              <div className="flex h-16 items-center border-b border-border px-6">
+              <div className="flex h-16 items-center border-b border-gray-100 px-6">
                 <Link href="/" className="flex items-center gap-3 font-bold text-xl" onClick={() => setOpen(false)}>
                   <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-linear-to-br from-indigo-500 to-violet-600 shadow-md shadow-indigo-500/20">
                     <TrendingUp className="h-5 w-5 text-white" />

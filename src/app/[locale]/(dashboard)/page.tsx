@@ -163,24 +163,22 @@ export default function DashboardPage() {
       try {
         setChartsLoading(true);
         
-        // Fetch current month data for pie chart
-        const currentMonth = getCurrentMonthRange();
-        const currentMonthTransactions = await fetcher<Transaction[]>(
-          `/transactions/filter?startDate=${currentMonth.startDate}&endDate=${currentMonth.endDate}`
-        );
-        
-        // Fetch last 6 months data for bar chart
+        // Single API call: fetch last 6 months data for both charts
         const last6Months = getLast6MonthsRange();
-        const last6MonthsTransactions = await fetcher<Transaction[]>(
+        const allTransactions = await fetcher<Transaction[]>(
           `/transactions/filter?startDate=${last6Months.startDate}&endDate=${last6Months.endDate}`
         );
         
-        if (currentMonthTransactions) {
+        if (allTransactions) {
+          // Filter current month from the 6-month data for pie chart
+          const currentMonth = getCurrentMonthRange();
+          const currentMonthTransactions = allTransactions.filter(tx => {
+            const txDate = tx.date.split('T')[0];
+            return txDate >= currentMonth.startDate && txDate <= currentMonth.endDate;
+          });
+
           setPieData(processPieData(currentMonthTransactions));
-        }
-        
-        if (last6MonthsTransactions) {
-          setBarData(processBarData(last6MonthsTransactions));
+          setBarData(processBarData(allTransactions));
         }
       } catch (error) {
         console.error("Failed to load chart data", error);

@@ -20,8 +20,9 @@ import axios from "axios";
 import { useAuthStore } from "@/stores/auth-store";
 import { useRouter, Link } from "@/i18n/routing";
 import { ApiResponse, AuthResponse } from "@/types";
-import { TrendingUp, Mail, Lock, Loader2 } from "lucide-react";
+import { TrendingUp, Mail, Lock, Loader2, AlertCircle } from "lucide-react";
 import { useTranslations, useLocale } from "next-intl";
+import { useState } from "react";
 
 export default function LoginPage() {
   const t = useTranslations("Auth");
@@ -29,6 +30,7 @@ export default function LoginPage() {
   const locale = useLocale();
   const router = useRouter();
   const login = useAuthStore((state) => state.login);
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
@@ -39,6 +41,7 @@ export default function LoginPage() {
   });
 
   async function onSubmit(data: LoginInput) {
+    setLoginError(null);
     try {
       const response = await api.post<ApiResponse<AuthResponse>>(
         "/auth/login",
@@ -51,16 +54,26 @@ export default function LoginPage() {
         toast.success(t("loginSuccess"));
         router.push("/");
       } else {
-        toast.error(response.data.error?.message || "Login failed");
+        const errorMsg = t("invalidCredentials");
+        setLoginError(errorMsg);
+        toast.error(errorMsg);
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
-        toast.error(
-          error.response?.data?.error?.message ||
-            t("loginFailed"),
-        );
+        const message = error.response?.data?.error?.message;
+        if (message?.includes("Invalid credentials") || message?.includes("Unauthorized")) {
+          const errorMsg = t("invalidCredentials");
+          setLoginError(errorMsg);
+          toast.error(errorMsg);
+        } else {
+          const errorMsg = message || t("loginFailed");
+          setLoginError(errorMsg);
+          toast.error(errorMsg);
+        }
       } else {
-        toast.error(t("loginFailed"));
+        const errorMsg = t("loginFailed");
+        setLoginError(errorMsg);
+        toast.error(errorMsg);
       }
     }
   }
@@ -100,8 +113,17 @@ export default function LoginPage() {
           </p>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Inline Error Banner */}
+          {loginError && (
+            <div className="flex items-start gap-3 rounded-xl bg-red-50 border border-red-200 p-4 animate-in fade-in slide-in-from-top-2 duration-300">
+              <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-red-800">{loginError}</p>
+              </div>
+            </div>
+          )}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" onChange={() => setLoginError(null)}>
               <FormField
                 control={form.control}
                 name="email"
