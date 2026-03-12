@@ -106,7 +106,7 @@ export default function TransactionsPage() {
           ...data,
           type: selectedType,
         };
-        console.log("Submitting transaction:", payload);
+        // console.log("Submitting transaction:", payload);
         
         const response = await api.post<ApiResponse<Transaction>>("/transactions", payload);
         if (response.data.success) {
