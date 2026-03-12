@@ -389,7 +389,7 @@ export default function TransactionsPage() {
                 </p>
                 <Button 
                   onClick={() => setIsDialogOpen(true)}
-                  className="gap-2 bg-linear-to-r text-white from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 shadow-lg shadow-indigo-500/20"
+                  className="gap-2 bg-linear-to-r text-white from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 border-0 shadow-[0_4px_14px_0_rgb(99,102,241,0.39)] hover:shadow-[0_6px_20px_rgba(99,102,241,0.23)] hover:-translate-y-0.5 transition-all duration-200"
                 >
                   <PlusIcon className="h-4 w-4" />
                   {t("addTransaction")}

@@ -380,7 +380,7 @@ export default function DashboardPage() {
         >
           <Button
             size="icon"
-            className="h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary/90 transition-all duration-200 hover:scale-110 active:scale-95 shadow-primary/20"
+            className="h-14 w-14 rounded-full bg-linear-to-br from-indigo-500 to-violet-600 border-2 border-white/20 shadow-[0_8px_30px_rgb(99,102,241,0.3)] hover:shadow-[0_8px_40px_rgb(99,102,241,0.5)] transition-all duration-300 hover:scale-110 active:scale-95 text-white"
             onClick={() => window.location.href = `/${locale}/transactions`}
             aria-label={t("addTransaction")}
           >
