@@ -258,9 +258,9 @@ export default function DashboardPage() {
         className="grid gap-4 md:grid-cols-3"
       >
         {/* Balance Card */}
-        <motion.div variants={itemVariants}>
-          <Card className="relative overflow-hidden rounded-lg border border-border bg-background shadow-none transition-all duration-200 hover:border-primary/50">
-            <CardContent className="p-6">
+        <motion.div variants={itemVariants} className="h-full">
+          <Card className="h-full flex flex-col relative overflow-hidden rounded-lg border border-border bg-background shadow-none transition-all duration-200 hover:border-primary/50">
+            <CardContent className="p-6 flex flex-col flex-1">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-muted-foreground">{t("balance")}</p>
@@ -268,12 +268,12 @@ export default function DashboardPage() {
                     <AnimatedNumber value={displayData.balance} suffix={` ${tCommon("thailandBaht")}`} />
                   </div>
                 </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 shrink-0">
                   <WalletIcon className="h-6 w-6 text-primary" />
                 </div>
               </div>
-              <div className="mt-4 flex items-center gap-1 text-sm text-muted-foreground">
-                <TrendingUp className="h-4 w-4 text-emerald-500" />
+              <div className="mt-auto pt-4 flex items-center gap-1 text-sm text-muted-foreground">
+                <TrendingUp className="h-4 w-4 text-emerald-500 shrink-0" />
                 <span>{t("itemsThisMonth", { count: displayData.transactionCount || 0 })}</span>
               </div>
             </CardContent>
@@ -281,9 +281,9 @@ export default function DashboardPage() {
         </motion.div>
 
         {/* Income Card */}
-        <motion.div variants={itemVariants}>
-          <Card className="relative overflow-hidden rounded-lg border border-border bg-background shadow-none transition-all duration-200 hover:border-emerald-500/50">
-            <CardContent className="p-6">
+        <motion.div variants={itemVariants} className="h-full">
+          <Card className="h-full flex flex-col relative overflow-hidden rounded-lg border border-border bg-background shadow-none transition-all duration-200 hover:border-emerald-500/50">
+            <CardContent className="p-6 flex flex-col flex-1">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-muted-foreground">{t("income")}</p>
@@ -291,11 +291,11 @@ export default function DashboardPage() {
                     <AnimatedNumber value={displayData.totalIncome} prefix="+" suffix={` ${tCommon("thailandBaht")}`} />
                   </div>
                 </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-100/50">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-100/50 shrink-0">
                   <ArrowUpIcon className="h-6 w-6 text-emerald-600" />
                 </div>
               </div>
-              <div className="mt-4 flex items-center gap-1 text-sm">
+              <div className="mt-auto pt-4 flex items-center gap-1 text-sm">
                 {displayData.incomeChangePercent >= 0 ? (
                   <>
                     <TrendingUp className="h-4 w-4 text-emerald-600" />
@@ -317,9 +317,9 @@ export default function DashboardPage() {
         </motion.div>
 
         {/* Expense Card */}
-        <motion.div variants={itemVariants}>
-          <Card className="relative overflow-hidden rounded-lg border border-border bg-background shadow-none transition-all duration-200 hover:border-rose-500/50">
-            <CardContent className="p-6">
+        <motion.div variants={itemVariants} className="h-full">
+          <Card className="h-full flex flex-col relative overflow-hidden rounded-lg border border-border bg-background shadow-none transition-all duration-200 hover:border-rose-500/50">
+            <CardContent className="p-6 flex flex-col flex-1">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-muted-foreground">{t("expense")}</p>
@@ -327,11 +327,11 @@ export default function DashboardPage() {
                     <AnimatedNumber value={displayData.totalExpense} prefix="-" suffix={` ${tCommon("thailandBaht")}`} />
                   </div>
                 </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-rose-100/50">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-rose-100/50 shrink-0">
                   <ArrowDownIcon className="h-6 w-6 text-rose-600" />
                 </div>
               </div>
-              <div className="mt-4 flex items-center gap-1 text-sm">
+              <div className="mt-auto pt-4 flex items-center gap-1 text-sm">
                 {displayData.expenseChangePercent >= 0 ? (
                   <>
                     <TrendingUp className="h-4 w-4 text-rose-600" />
