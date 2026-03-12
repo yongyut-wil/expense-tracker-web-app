@@ -1,0 +1,134 @@
+{
+  "Common": {
+    "appName": "ExpenseTracker",
+    "logout": "Logout",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "loading": "Loading data...",
+    "noData": "No transactions yet",
+    "thailandBaht": "฿",
+    "sessionExpired": "Session expired, please login again",
+    "guestUser": "Guest User"
+  },
+  "Metadata": {
+    "title": "Expense Tracker",
+    "description": "Personal Expense Tracker Application",
+    "template": "%s | Expense Tracker"
+  },
+  "Auth": {
+    "login": "Login",
+    "welcome": "Welcome back",
+    "email": "Email",
+    "password": "Password",
+    "loggingIn": "Logging in...",
+    "noAccount": "Don't have an account?",
+    "register": "Register",
+    "emailPlaceholder": "user@example.com",
+    "passwordPlaceholder": "••••••••",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "or": "or",
+    "loginSuccess": "Login successful",
+    "loginFailed": "Login failed",
+    "description": "Track your expenses easily",
+    "registerSuccess": "Registration successful, please login",
+    "registerFailed": "Registration failed",
+    "name": "Name",
+    "namePlaceholder": "Enter your name",
+    "confirmPassword": "Confirm Password",
+    "acceptTerms": "I accept",
+    "terms": "terms and conditions",
+    "passwordStrength": {
+      "label": "Password Strength",
+      "veryWeak": "Very Weak",
+      "weak": "Weak",
+      "medium": "Medium",
+      "strong": "Strong",
+      "veryStrong": "Very Strong"
+    },
+    "validation": {
+      "emailInvalid": "Invalid email format",
+      "passwordMin": "Password must be at least 6 characters",
+      "nameMin": "Name must be at least 2 characters",
+      "passwordMismatch": "Passwords do not match"
+    }
+  },
+  "Navigation": {
+    "overview": "Overview",
+    "transactions": "Transactions",
+    "menu": "Navigation Menu",
+    "user": "User"
+  },
+  "Dashboard": {
+    "welcome": "Welcome",
+    "balance": "Balance",
+    "income": "Total Income",
+    "expense": "Total Expense",
+    "itemsThisMonth": "{count} items this month",
+    "increaseFromLastMonth": "{percent} increase from last month",
+    "decreaseFromLastMonth": "{percent} decrease from last month",
+    "addTransaction": "Add New Transaction",
+    "incomeVsExpense": "Income vs Expense",
+    "last6Months": "Last 6 months",
+    "expenseByCategory": "Expense by Category",
+    "thisMonth": "This month",
+    "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+  },
+  "Transactions": {
+    "title": "Transactions",
+    "subtitle": "Manage your income and expenses",
+    "addTransaction": "Add Transaction",
+    "searchPlaceholder": "Search transactions...",
+    "filter": "Filter",
+    "sort": "Sort",
+    "all": "All",
+    "income": "Income",
+    "expense": "Expense",
+    "sortBy": {
+      "newest": "Newest First",
+      "oldest": "Oldest First",
+      "highest": "Highest Amount",
+      "lowest": "Lowest Amount"
+    },
+    "form": {
+      "newTransaction": "Add New Transaction",
+      "type": {
+        "income": "Income",
+        "expense": "Expense"
+      },
+      "description": "Description",
+      "descriptionPlaceholder": {
+        "income": "e.g., Salary",
+        "expense": "e.g., Lunch"
+      },
+      "amount": "Amount (Baht)",
+      "date": "Date",
+      "category": "Category",
+      "selectCategory": "Select Category",
+      "selectDate": "Select Date",
+      "validation": {
+        "amountPositive": "Amount must be positive",
+        "titleRequired": "Title is required",
+        "dateRequired": "Date is required"
+      }
+    },
+    "noResults": "No results found",
+    "startFirst": "Start recording your first transaction today"
+  },
+  "Categories": {
+    "food": "Food & Dining",
+    "transport": "Transportation",
+    "shopping": "Shopping",
+    "entertainment": "Entertainment",
+    "bills": "Bills & Utilities",
+    "healthcare": "Healthcare",
+    "education": "Education",
+    "other_expense": "Other",
+    "salary": "Salary",
+    "freelance": "Freelance",
+    "investment": "Investment",
+    "gift": "Gift",
+    "other_income": "Other"
+  }
+}

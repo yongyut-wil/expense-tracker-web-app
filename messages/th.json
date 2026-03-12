@@ -1,0 +1,134 @@
+{
+  "Common": {
+    "appName": "ExpenseTracker",
+    "logout": "ออกจากระบบ",
+    "save": "บันทึกรายการ",
+    "saving": "กำลังบันทึก...",
+    "cancel": "ยกเลิก",
+    "loading": "กำลังโหลดข้อมูล...",
+    "noData": "ยังไม่มีรายการ",
+    "thailandBaht": "฿",
+    "sessionExpired": "เซสชั่นหมดอายุ กรุณาเข้าสู่ระบบใหม่",
+    "guestUser": "ผู้ใช้งานทั่วไป"
+  },
+  "Metadata": {
+    "title": "ระบบติดตามค่าใช้จ่าย",
+    "description": "แอปพลิเคชันสำหรับติดตามและจัดการค่าใช้จ่ายส่วนตัว",
+    "template": "%s | ระบบติดตามค่าใช้จ่าย"
+  },
+  "Auth": {
+    "login": "เข้าสู่ระบบ",
+    "welcome": "ยินดีต้อนรับกลับมา",
+    "email": "อีเมล",
+    "password": "รหัสผ่าน",
+    "loggingIn": "กำลังเข้าสู่ระบบ...",
+    "noAccount": "ยังไม่มีบัญชีใช่ไหม?",
+    "register": "สมัครสมาชิก",
+    "emailPlaceholder": "user@example.com",
+    "passwordPlaceholder": "••••••••",
+    "rememberMe": "จดจำฉันไว้",
+    "forgotPassword": "ลืมรหัสผ่าน?",
+    "or": "หรือ",
+    "loginSuccess": "เข้าสู่ระบบสำเร็จ",
+    "loginFailed": "เข้าสู่ระบบไม่สำเร็จ",
+    "description": "จัดการค่าใช้จ่ายของคุณได้อย่างง่ายดาย",
+    "registerSuccess": "สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบ",
+    "registerFailed": "สมัครสมาชิกไม่สำเร็จ",
+    "name": "ชื่อ",
+    "namePlaceholder": "ระบุชื่อของคุณ",
+    "confirmPassword": "ยืนยันรหัสผ่าน",
+    "acceptTerms": "ฉันยอมรับ",
+    "terms": "ข้อตกลงและเงื่อนไข",
+    "passwordStrength": {
+      "label": "ความแข็งแกร่งของรหัสผ่าน",
+      "veryWeak": "คาดเดาง่ายมาก",
+      "weak": "คาดเดาง่าย",
+      "medium": "ปานกลาง",
+      "strong": "รัดกุม",
+      "veryStrong": "รัดกุมมาก"
+    },
+    "validation": {
+      "emailInvalid": "รูปแบบอีเมลไม่ถูกต้อง",
+      "passwordMin": "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร",
+      "nameMin": "ชื่อต้องมีอย่างน้อย 2 ตัวอักษร",
+      "passwordMismatch": "รหัสผ่านไม่ตรงกัน"
+    }
+  },
+  "Navigation": {
+    "overview": "ภาพรวม",
+    "transactions": "รายการธุรกรรม",
+    "menu": "เมนูนำทาง",
+    "user": "ผู้ใช้งาน"
+  },
+  "Dashboard": {
+    "welcome": "สวัสดี",
+    "balance": "ยอดเงินคงเหลือ",
+    "income": "รายรับทั้งหมด",
+    "expense": "รายจ่ายทั้งหมด",
+    "itemsThisMonth": "{count} รายการในเดือนนี้",
+    "increaseFromLastMonth": "เพิ่มขึ้น {percent} จากเดือนก่อน",
+    "decreaseFromLastMonth": "ลดลง {percent} จากเดือนก่อน",
+    "addTransaction": "เพิ่มรายการใหม่",
+    "incomeVsExpense": "รายรับ vs รายจ่าย",
+    "last6Months": "เปรียบเทียบ 6 เดือนล่าสุด",
+    "expenseByCategory": "รายจ่ายตามหมวดหมู่",
+    "thisMonth": "เดือนนี้",
+    "months": ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."]
+  },
+  "Transactions": {
+    "title": "รายการธุรกรรม",
+    "subtitle": "จัดการรายรับ-รายจ่ายของคุณ",
+    "addTransaction": "เพิ่มรายการ",
+    "searchPlaceholder": "ค้นหารายการ...",
+    "filter": "ตัวกรอง",
+    "sort": "เรียงลำดับ",
+    "all": "ทั้งหมด",
+    "income": "รายรับ",
+    "expense": "รายจ่าย",
+    "sortBy": {
+      "newest": "ล่าสุดก่อน",
+      "oldest": "เก่าสุดก่อน",
+      "highest": "ยอดเงินสูงสุด",
+      "lowest": "ยอดเงินต่ำสุด"
+    },
+    "form": {
+      "newTransaction": "เพิ่มรายการใหม่",
+      "type": {
+        "income": "รายรับ",
+        "expense": "รายจ่าย"
+      },
+      "description": "รายละเอียด",
+      "descriptionPlaceholder": {
+        "income": "เช่น เงินเดือน",
+        "expense": "เช่น ค่าอาหารกลางวัน"
+      },
+      "amount": "จำนวนเงิน (บาท)",
+      "date": "วันที่",
+      "category": "หมวดหมู่",
+      "selectCategory": "เลือกหมวดหมู่",
+      "selectDate": "เลือกวันที่",
+      "validation": {
+        "amountPositive": "จำนวนเงินต้องมากกว่า 0",
+        "titleRequired": "กรุณาระบุรายละเอียด",
+        "dateRequired": "กรุณาเลือกวันที่"
+      }
+    },
+    "noResults": "ไม่พบรายการที่ค้นหา",
+    "startFirst": "เริ่มจดบันทึกรายรับรายจ่ายรายการแรกของคุณได้เลย"
+  },
+  "Categories": {
+    "food": "อาหารและเครี่องดื่ม",
+    "transport": "การเดินทาง",
+    "shopping": "ช้อปปิ้ง",
+    "entertainment": "ความบันเทิง",
+    "bills": "บิลและสาธารณูปโภค",
+    "healthcare": "สุขภาพ",
+    "education": "การศึกษา",
+    "other_expense": "อื่นๆ",
+    "salary": "เงินเดือน",
+    "freelance": "งานอิสระ",
+    "investment": "การลงทุน",
+    "gift": "ของขวัญ",
+    "other_income": "อื่นๆ"
+  }
+}

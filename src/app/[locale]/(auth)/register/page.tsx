@@ -16,13 +16,16 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import api from "@/lib/api";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useRouter, Link } from "@/i18n/routing";
 import { ApiResponse } from "@/types";
 import { Wallet, User, Mail, Lock, ShieldCheck, Loader2, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { useTranslations, useLocale } from "next-intl";
 
 export default function RegisterPage() {
+  const t = useTranslations("Auth");
+  const tCommon = useTranslations("Common");
+  const locale = useLocale();
   const router = useRouter();
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
@@ -40,20 +43,19 @@ export default function RegisterPage() {
 
   // Password strength checker
   const checkPasswordStrength = (password: string) => {
-    // 1. กำหนดเกณฑ์การตรวจสอบ (Criteria) เป็นรายการเงื่อนไข Boolean
+    // 1. Define verification criteria as a list of Boolean conditions
     const criteria = [
-      password.length >= 8,           // ความยาวอย่างน้อย 8 ตัวอักษร
-      /[A-Z]/.test(password),        // มีตัวอักษรพิมพ์ใหญ่ (A-Z)
-      /[a-z]/.test(password),        // มีตัวอักษรพิมพ์เล็ก (a-z)
-      /[0-9]/.test(password),        // มีตัวเลข (0-9)
-      /[^A-Za-z0-9]/.test(password), // มีอักขระพิเศษ (เช่น !@#$%^&*)
+      password.length >= 8,           // Minimum 8 characters
+      /[A-Z]/.test(password),        // Has uppercase letter (A-Z)
+      /[a-z]/.test(password),        // Has lowercase letter (a-z)
+      /[0-9]/.test(password),        // Has number (0-9)
+      /[^A-Za-z0-9]/.test(password), // Has special character (e.g., !@#$%^&*)
     ];
 
-    // 2. กรองเอาเฉพาะเงื่อนไขที่ผ่าน (true) และนับจำนวนเพื่อเป็นคะแนนความแข็งแกร่ง (0-5)
-    // การใช้ filter(Boolean) ช่วยให้โค้ดกระชับและอ่านง่ายกว่าการใช้ if-else หลายตัว
+    // 2. Filter for passed conditions (true) and count for strength score (0-5)
     const score = criteria.filter(Boolean).length;
 
-    // 3. อัปเดตสถานะความแข็งแกร่งเพื่อนำไปแสดงผลสีและข้อความแจ้งเตือนใน UI
+    // 3. Update strength state for UI display (color and text)
     setPasswordStrength(score);
   };
 
@@ -66,11 +68,11 @@ export default function RegisterPage() {
   };
 
   const getStrengthText = () => {
-    if (passwordStrength <= 1) return "คาดเดาง่ายมาก";
-    if (passwordStrength <= 2) return "คาดเดาง่าย";
-    if (passwordStrength <= 3) return "ปานกลาง";
-    if (passwordStrength <= 4) return "รัดกุม";
-    return "รัดกุมมาก";
+    if (passwordStrength <= 1) return t("passwordStrength.veryWeak");
+    if (passwordStrength <= 2) return t("passwordStrength.weak");
+    if (passwordStrength <= 3) return t("passwordStrength.medium");
+    if (passwordStrength <= 4) return t("passwordStrength.strong");
+    return t("passwordStrength.veryStrong");
   };
 
   async function onSubmit(data: RegisterInput) {
@@ -82,22 +84,22 @@ export default function RegisterPage() {
       });
 
       if (response.data.success) {
-        toast.success("สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบ");
+        toast.success(t("registerSuccess"));
         router.push("/login");
       } else {
         toast.error(response.data.error?.message || "Registration failed");
       }
     } catch (error: any) {
-      toast.error(error.response?.data?.error?.message || "เกิดข้อผิดพลาดในการสมัครสมาชิก");
+      toast.error(error.response?.data?.error?.message || t("registerFailed"));
     }
   }
 
   return (
     <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden p-4">
       {/* Animated gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-100 via-white to-violet-100">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-200/40 via-transparent to-transparent animate-pulse" style={{ animationDuration: '4s' }} />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-violet-200/40 via-transparent to-transparent animate-pulse" style={{ animationDuration: '5s', animationDelay: '1s' }} />
+      <div className="absolute inset-0 bg-linear-to-br from-indigo-100 via-white to-violet-100">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-indigo-200/40 via-transparent to-transparent animate-pulse" style={{ animationDuration: '4s' }} />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,var(--tw-gradient-stops))] from-violet-200/40 via-transparent to-transparent animate-pulse" style={{ animationDuration: '5s', animationDelay: '1s' }} />
       </div>
       
       {/* Floating decorative elements */}
@@ -107,14 +109,14 @@ export default function RegisterPage() {
 
       <Card className="relative w-full max-w-md shadow-2xl border-0 backdrop-blur-sm bg-white/80 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <CardHeader className="space-y-2 text-center pb-4">
-          <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 shadow-lg shadow-indigo-500/30 transition-transform hover:scale-105">
+          <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-indigo-500 to-violet-500 shadow-lg shadow-indigo-500/30 transition-transform hover:scale-105">
             <Wallet className="h-8 w-8 text-white" />
           </div>
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
-            สร้างบัญชีใหม่
+          <CardTitle className="text-2xl font-bold bg-linear-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">
+            {t("register")}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            เริ่มต้นจัดการการเงินของคุณวันนี้
+            {t("description")}
           </p>
         </CardHeader>
         <CardContent className="space-y-5">
@@ -123,55 +125,59 @@ export default function RegisterPage() {
               <FormField
                 control={form.control}
                 name="name"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700">ชื่อ</FormLabel>
+                    <FormLabel className="text-gray-700">{t("name")}</FormLabel>
                     <FormControl>
                       <div className="relative group">
                         <User className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 transition-colors group-focus-within:text-indigo-500" />
                         <Input 
-                          placeholder="Your Name" 
+                          placeholder={t("namePlaceholder")} 
                           className="pl-10 h-11 bg-gray-50/50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500/20 transition-all" 
                           {...field} 
                         />
                       </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500">
+                      {fieldState.error && t(fieldState.error.message as any)}
+                    </FormMessage>
                   </FormItem>
                 )}
               />
               <FormField
                 control={form.control}
                 name="email"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700">อีเมล</FormLabel>
+                    <FormLabel className="text-gray-700">{t("email")}</FormLabel>
                     <FormControl>
                       <div className="relative group">
                         <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 transition-colors group-focus-within:text-indigo-500" />
                         <Input 
-                          placeholder="user@example.com" 
+                          placeholder={t("emailPlaceholder")} 
                           className="pl-10 h-11 bg-gray-50/50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500/20 transition-all" 
                           {...field} 
                         />
                       </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500">
+                      {fieldState.error && t(fieldState.error.message as any)}
+                    </FormMessage>
                   </FormItem>
                 )}
               />
               <FormField
                 control={form.control}
                 name="password"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700">รหัสผ่าน</FormLabel>
+                    <FormLabel className="text-gray-700">{t("password")}</FormLabel>
                     <FormControl>
                       <div className="relative group">
                         <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 transition-colors group-focus-within:text-indigo-500" />
                         <Input 
                           type={showPassword ? "text" : "password"}
-                          placeholder="••••••••" 
+                          placeholder={t("passwordPlaceholder")} 
                           className="pl-10 h-11 bg-gray-50/50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500/20 transition-all" 
                           {...field}
                           onChange={(e) => {
@@ -206,26 +212,28 @@ export default function RegisterPage() {
                           ))}
                         </div>
                         <p className={`text-xs ${passwordStrength >= 4 ? 'text-emerald-600' : 'text-muted-foreground'}`}>
-                          ความคาดเดาง่าย: {getStrengthText()}
+                          {t("passwordStrength.label")}: {getStrengthText()}
                         </p>
                       </div>
                     )}
-                    <FormMessage />
+                    <FormMessage className="text-red-500">
+                      {fieldState.error && t(fieldState.error.message as any)}
+                    </FormMessage>
                   </FormItem>
                 )}
               />
                <FormField
                 control={form.control}
                 name="confirmPassword"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700">ยืนยันรหัสผ่าน</FormLabel>
+                    <FormLabel className="text-gray-700">{t("confirmPassword")}</FormLabel>
                     <FormControl>
                        <div className="relative group">
                         <ShieldCheck className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 transition-colors group-focus-within:text-indigo-500" />
                         <Input 
                           type={showConfirmPassword ? "text" : "password"}
-                          placeholder="••••••••" 
+                          placeholder={t("passwordPlaceholder")} 
                           className="pl-10 h-11 bg-gray-50/50 border-gray-200 focus:border-indigo-500 focus:ring-indigo-500/20 transition-all" 
                           {...field} 
                         />
@@ -242,34 +250,36 @@ export default function RegisterPage() {
                         </button>
                       </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500">
+                      {fieldState.error && t(fieldState.error.message as any)}
+                    </FormMessage>
                   </FormItem>
                 )}
               />
               <label className="flex items-center gap-3 cursor-pointer text-sm text-muted-foreground hover:text-gray-700 transition-colors py-1">
                 <input type="checkbox" className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" required />
-                <span>ฉันยอมรับ <Link href="#" className="text-indigo-600 hover:underline">ข้อตกลงและเงื่อนไข</Link></span>
+                <span>{t("acceptTerms")} <Link href="#" className="text-indigo-600 hover:underline">{t("terms")}</Link></span>
               </label>
               <Button 
                 type="submit" 
-                className="w-full h-12 text-base font-semibold text-white bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/30 active:scale-[0.98]" 
+                className="w-full h-12 text-base font-semibold text-white bg-linear-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/30 active:scale-[0.98]" 
                 disabled={form.formState.isSubmitting}
               >
                 {form.formState.isSubmitting ? (
                   <span className="flex items-center gap-2">
                     <Loader2 className="h-5 w-5 animate-spin" />
-                    กำลังสมัคร...
+                    {t("loggingIn")}
                   </span>
                 ) : (
-                  "สมัครสมาชิก"
+                  t("register")
                 )}
               </Button>
             </form>
           </Form>
            <div className="text-center text-sm">
-             <span className="text-muted-foreground">มีบัญชีแล้ว? </span>
+             <span className="text-muted-foreground">{t("noAccount")}? </span>
             <Link href="/login" className="text-indigo-600 hover:text-indigo-700 font-semibold transition-colors">
-              เข้าสู่ระบบ
+              {t("login")}
             </Link>
           </div>
         </CardContent>

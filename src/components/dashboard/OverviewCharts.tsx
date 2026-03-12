@@ -3,33 +3,12 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, PieChartIcon } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 
 
 // Theme-consistent colors (Indigo/Violet palette)
 const COLORS = ['#6366f1', '#8b5cf6', '#a855f7', '#c084fc'];
-
-// Custom tooltip component
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-white/95 backdrop-blur-sm border border-gray-200 rounded-xl shadow-lg p-3">
-        <p className="font-semibold text-gray-900 mb-2">{label}</p>
-        {payload.map((entry: any, index: number) => (
-          <div key={index} className="flex items-center gap-2 text-sm">
-            <div
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: entry.color }}
-            />
-            <span className="text-gray-600">{entry.name}:</span>
-            <span className="font-semibold text-gray-900">฿{entry.value.toLocaleString()}</span>
-          </div>
-        ))}
-      </div>
-    );
-  }
-  return null;
-};
 
 export interface OverviewChartsProps {
   pieData?: { name: string; value: number }[];
@@ -37,18 +16,44 @@ export interface OverviewChartsProps {
 }
 
 export function OverviewCharts({ pieData = [], barData = [] }: OverviewChartsProps) {
+  const t = useTranslations("Dashboard");
+  const tTrans = useTranslations("Transactions");
+  const tCommon = useTranslations("Common");
+
+  // Custom tooltip component
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white/95 backdrop-blur-sm border border-gray-200 rounded-xl shadow-lg p-3">
+          <p className="font-semibold text-gray-900 mb-2">{label}</p>
+          {payload.map((entry: any, index: number) => (
+            <div key={index} className="flex items-center gap-2 text-sm">
+              <div
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: entry.color }}
+              />
+              <span className="text-gray-600">{entry.name}:</span>
+              <span className="font-semibold text-gray-900">{tCommon("thailandBaht")}{entry.value.toLocaleString()}</span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
       {/* Bar Chart - Income vs Expense */}
       <Card className="col-span-4 rounded-2xl border-0 shadow-lg shadow-gray-200/50 overflow-hidden">
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-indigo-500 to-violet-600">
               <TrendingUp className="h-5 w-5 text-white" />
             </div>
             <div>
-              <CardTitle className="text-lg font-semibold">รายรับ vs รายจ่าย</CardTitle>
-              <p className="text-sm text-muted-foreground">เปรียบเทียบ 6 เดือนล่าสุด</p>
+              <CardTitle className="text-lg font-semibold">{t("incomeVsExpense")}</CardTitle>
+              <p className="text-sm text-muted-foreground">{t("last6Months")}</p>
             </div>
           </div>
         </CardHeader>
@@ -76,7 +81,7 @@ export function OverviewCharts({ pieData = [], barData = [] }: OverviewChartsPro
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: '#64748b', fontSize: 12 }}
-                tickFormatter={(value) => `฿${(value / 1000).toFixed(0)}k`}
+                tickFormatter={(value) => `${tCommon("thailandBaht")}${(value / 1000).toFixed(0)}k`}
               />
               <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(99, 102, 241, 0.1)' }} />
               <Legend
@@ -85,14 +90,14 @@ export function OverviewCharts({ pieData = [], barData = [] }: OverviewChartsPro
               />
               <Bar
                 dataKey="income"
-                name="รายรับ"
+                name={tTrans("income")}
                 fill="url(#incomeGradient)"
                 radius={[8, 8, 0, 0]}
                 maxBarSize={40}
               />
               <Bar
                 dataKey="expense"
-                name="รายจ่าย"
+                name={tTrans("expense")}
                 fill="url(#expenseGradient)"
                 radius={[8, 8, 0, 0]}
                 maxBarSize={40}
@@ -106,12 +111,12 @@ export function OverviewCharts({ pieData = [], barData = [] }: OverviewChartsPro
       <Card className="col-span-3 rounded-2xl border-0 shadow-lg shadow-gray-200/50 overflow-hidden">
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-600">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-violet-500 to-purple-600">
               <PieChartIcon className="h-5 w-5 text-white" />
             </div>
             <div>
-              <CardTitle className="text-lg font-semibold">รายจ่ายตามหมวดหมู่</CardTitle>
-              <p className="text-sm text-muted-foreground">เดือนนี้</p>
+              <CardTitle className="text-lg font-semibold">{t("expenseByCategory")}</CardTitle>
+              <p className="text-sm text-muted-foreground">{t("thisMonth")}</p>
             </div>
           </div>
         </CardHeader>
@@ -136,7 +141,7 @@ export function OverviewCharts({ pieData = [], barData = [] }: OverviewChartsPro
                 dataKey="value"
                 strokeWidth={0}
               >
-                {pieData.map((entry, index) => (
+                {pieData.map((entry: any, index: number) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={`url(#pieGradient${index % COLORS.length})`}
