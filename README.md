@@ -1,36 +1,236 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Expense Tracker Web Application
 
-## Getting Started
+แอปพลิเคชันเว็บสำหรับติดตามและจัดการค่าใช้จ่ายส่วนตัว พัฒนาด้วย Next.js, React และ TypeScript
 
-First, run the development server:
+## 🌟 ฟีเจอร์หลัก
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### 💰 การจัดการรายรับ-รายจ่าย
+- บันทึกรายรับและรายจ่ายประจำวัน
+- แยกประเภทรายการตามหมวดหมู่ (อาหาร, การเดินทาง, ช้อปปิ้ง, บิล, ฯลฯ)
+- แก้ไขและลบรายการได้
+- แสดงยอดคงเหลือแบบสดๆ
+
+### 📊 แดชบอร์ดวิเคราะห์
+- ภาพรวมสถานะการเงิน (รายรับ, รายจ่าย, คงเหลือ)
+- กราฟแสดงแนวโน้มรายรับ-รายจ่าย
+- เปรียบเทียบข้อมูลเดือนปัจจุบันกับเดือนที่แล้ว
+- แสดงรายการล่าสุดพร้อมการเคลื่อนไหวแบบ Animated
+
+### 🌐 หลายภาษา
+- รองรับภาษาไทยและอังกฤษ
+- สลับภาษาได้แบบ Real-time
+- รูปแบบวันที่และสกุลเงินที่เหมาะสมกับแต่ละภาษา
+
+### 🎨 อินเทอร์เฟซที่ทันสมัย
+- ออกแบบด้วย Tailwind CSS และ shadcn/ui
+- รองรับ Dark Mode และ Light Mode
+- Animation และ Transitions ที่นุ่มนวล
+- Responsive Design ทำงานได้บนทุกอุปกรณ์
+
+### 🔐 ระบบความปลอดภัย
+- การยืนยันตัวตนผู้ใช้ (Login/Register)
+- JWT Token Authentication
+- Session Management
+- ป้องกันการเข้าถึงข้อมูลโดยไม่ได้รับอนุญาต
+
+## 🛠️ เทคโนโลยีที่ใช้
+
+### Frontend
+- **Next.js 16.1.1** - React Framework พร้อม App Router
+- **React 19.2.3** - UI Library
+- **TypeScript** - ภาษาพัฒนาที่มี Type Safety
+- **Tailwind CSS 4.1.18** - CSS Framework
+- **shadcn/ui** - Component Library
+- **Framer Motion** - Animation Library
+- **Recharts** - Chart Library
+- **next-intl** - Internationalization
+
+### State Management & API
+- **Zustand** - State Management
+- **React Hook Form** - Form Handling
+- **Zod** - Schema Validation
+- **Axios** - HTTP Client
+
+### UI Components
+- **Radix UI** - Headless UI Components
+- **Lucide React** - Icon Library
+- **Sonner** - Toast Notifications
+- **React Day Picker** - Date Picker
+
+## 📁 โครงสร้างโปรเจ็ค
+
+```
+expense-tracker-web-app/
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── [locale]/          # รองรับหลายภาษา
+│   │   │   ├── (auth)/        # หน้า Authentication
+│   │   │   └── (dashboard)/   # หน้า Dashboard
+│   ├── components/            # React Components
+│   │   ├── ui/               # UI Components (shadcn/ui)
+│   │   └── dashboard/        # Dashboard Components
+│   ├── lib/                  # Utility Functions
+│   │   ├── api.ts           # API Configuration
+│   │   └── categories.ts     # Category Definitions
+│   ├── stores/               # State Management (Zustand)
+│   ├── types/               # TypeScript Type Definitions
+│   └── i18n/                # Internationalization Config
+├── messages/                 # Translation Files
+│   ├── en.json              # English Translation
+│   └── th.json              # Thai Translation
+├── public/                  # Static Assets
+└── Dockerfile              # Docker Configuration
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 การติดตั้งและรัน
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### ข้อกำหนดเบื้องต้น
+- Node.js 22 ขึ้นไป
+- npm, yarn หรือ pnpm
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### ขั้นตอนการติดตั้ง
 
-## Learn More
+1. Clone repository
+```bash
+git clone <repository-url>
+cd expense-tracker-web-app
+```
 
-To learn more about Next.js, take a look at the following resources:
+2. Install dependencies
+```bash
+yarn install
+# หรือ
+npm install
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. ตั้งค่า Environment Variables
+```bash
+cp env-example .env
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+แก้ไขไฟล์ `.env` ตามความเหมาะสม:
+```
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
 
-## Deploy on Vercel
+4. รัน Development Server
+```bash
+yarn dev
+# หรือ
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+5. เปิดเบราว์เซอร์ที่ [http://localhost:3000](http://localhost:3000)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🐳 การใช้งานกับ Docker
+
+### Build Docker Image
+```bash
+docker build --build-arg NEXT_PUBLIC_API_URL=http://localhost:8000 -t expense-tracker .
+```
+
+### รัน Container
+```bash
+docker run -p 3000:3000 expense-tracker
+```
+
+## 📝 การใช้งาน
+
+### 1. สมัครสมาชิกและเข้าสู่ระบบ
+- สร้างบัญชีผู้ใช้ใหม่ผ่านหน้า Register
+- เข้าสู่ระบบด้วย Email และ Password
+
+### 2. บันทึกรายการ
+- คลิกปุ่ม "เพิ่มรายการ" บนหน้า Dashboard
+- เลือกประเภท (รายรับ/รายจ่าย)
+- กรอกรายละเอียด จำนวนเงิน หมวดหมู่ และวันที่
+- บันทึกรายการ
+
+### 3. ดูแดชบอร์ด
+- ดูภาพรวมการเงินประจำเดือน
+- ตรวจสอบแนวโน้มรายรับ-รายจ่าย
+- ดูรายการล่าสุด
+
+### 4. จัดการรายการ
+- แก้ไขรายการที่บันทึกไว้
+- ลบรายการที่ไม่ต้องการ
+- กรองและค้นหารายการ
+
+## 🎨 หมวดหมู่รายการ
+
+### รายจ่าย
+- 🍽️ อาหารและเครื่องดื่ม
+- 🚗 การเดินทาง
+- 🛍️ การช้อปปิ้ง
+- 🎬 บันเทิง
+- ⚡ บิลและสาธารณูปโภค
+- 🏥 การแพทย์และสุขภาพ
+- 📚 การศึกษา
+- 📦 อื่นๆ
+
+### รายรับ
+- 💼 เงินเดือน
+- 💻 งาน Freelance
+- 📈 การลงทุน
+- 🎁 ของขวัญ
+- 📦 อื่นๆ
+
+## 🔧 คำสั่งที่มีประโยชน์
+
+### Development
+```bash
+yarn dev          # รัน Development Server
+yarn build        # Build สำหรับ Production
+yarn start        # รัน Production Server
+yarn lint         # ตรวจสอบ Code Quality
+```
+
+### Type Checking
+```bash
+npx tsc --noEmit   # ตรวจสอบ TypeScript
+```
+
+## 🚀 การ Deploy
+
+### การ Deploy อัตโนมัติ (CI/CD)
+
+#### GitHub Actions (แนะนำ)
+โปรเจ็คนี้มีการตั้งค่า CI/CD ผ่าน GitHub Actions แล้ว:
+
+1. **Auto Deploy เมื่อ Push ไปที่ Main Branch**
+   - Build Docker Image และ Push ไป GitHub Container Registry
+   - Deploy ไปยัง EC2 Server ผ่าน k3s (Kubernetes)
+   - Restart Deployment อัตโนมัติ
+
+2. **Workflow ที่มีอยู่:**
+   - `deploy-web.yml` - Build Docker และ Deploy ไป Production Server
+
+3. **Environment Variables ที่ต้องตั้งค่า:**
+   ```
+   NEXT_PUBLIC_API_URL=https://your-api-server.com
+   NODE_ENV=production
+   ```
+
+#### Docker
+```bash
+# Build Image
+docker build -t expense-tracker .
+
+# รัน Container
+docker run -p 3000:3000 expense-tracker
+
+# รันแบบ Production พร้อม Environment Variables
+docker run -p 3000:3000 \
+  -e NEXT_PUBLIC_API_URL=https://your-api.com \
+  expense-tracker
+```
+
+#### Manual Deploy
+```bash
+# Build สำหรับ Production
+yarn build
+
+# รัน Production Server
+yarn start
+```
+
