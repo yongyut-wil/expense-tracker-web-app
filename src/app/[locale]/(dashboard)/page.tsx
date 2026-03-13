@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AnimatedNumber } from "@/components/ui/animated-number";
 import { useTranslations, useLocale } from "next-intl";
 import { getCategoryConfig } from "@/lib/categories";
+import dayjs from "dayjs";
 
 
 interface Transaction {
@@ -66,40 +67,17 @@ export default function DashboardPage() {
 
   // Helper function to get date range for current month
   const getCurrentMonthRange = () => {
-    const now = new Date();
-    const start = new Date(now.getFullYear(), now.getMonth(), 1);
-    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-    
-    // Format as YYYY-MM-DD using local time
-    const formatDate = (date: Date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    };
-
     return {
-      startDate: formatDate(start),
-      endDate: formatDate(end)
+      startDate: dayjs().startOf('month').format('YYYY-MM-DD'),
+      endDate: dayjs().endOf('month').format('YYYY-MM-DD')
     };
   };
 
   // Helper function to get date range for last 6 months
   const getLast6MonthsRange = () => {
-    const now = new Date();
-    const start = new Date(now.getFullYear(), now.getMonth() - 5, 1);
-    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
-    const formatDate = (date: Date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    };
-
     return {
-      startDate: formatDate(start),
-      endDate: formatDate(end)
+      startDate: dayjs().subtract(5, 'month').startOf('month').format('YYYY-MM-DD'),
+      endDate: dayjs().endOf('month').format('YYYY-MM-DD')
     };
   };
 

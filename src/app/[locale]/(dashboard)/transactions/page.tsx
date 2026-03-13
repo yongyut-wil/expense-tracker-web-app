@@ -44,6 +44,10 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { th, enUS } from "date-fns/locale";
 import { useTranslations, useLocale } from "next-intl";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 export default function TransactionsPage() {
   const t = useTranslations("Transactions");
@@ -80,8 +84,9 @@ export default function TransactionsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Helper to normalize local date to 00:00 UTC
-  const toUTCDate = (date: Date) => {
-    return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())).toISOString();
+  const toUTCDate = (date: string | Date) => {
+    const d = dayjs(date);
+    return dayjs.utc(`${d.format("YYYY-MM-DD")}T00:00:00Z`).toISOString();
   };
 
   const form = useForm<TransactionInput>({
@@ -140,7 +145,7 @@ export default function TransactionsPage() {
           ...data,
           type: selectedType,
           // Ensure date is normalized to UTC 00:00 of the selected local day
-          date: toUTCDate(new Date(data.date))
+          date: toUTCDate(data.date)
         };
         
         if (editingTransaction) {
