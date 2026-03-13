@@ -45,6 +45,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   
   const logout = useAuthStore((state) => state.logout);
   const user = useAuthStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isLoading = useAuthStore((state) => state.isLoading);
   const fetchUser = useAuthStore((state) => state.fetchUser);
   const router = useRouter();
   const pathname = usePathname();
@@ -54,6 +56,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
+
+  // Auth Guard
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push("/login");
+    }
+  }, [isAuthenticated, isLoading, router]);
 
   const handleLogout = () => {
     logout();

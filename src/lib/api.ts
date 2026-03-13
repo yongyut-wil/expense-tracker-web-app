@@ -4,12 +4,17 @@ import { toast } from "sonner";
 import { useAuthStore } from "@/stores/auth-store";
 
 const getBaseURL = () => {
-  // If we are in the browser, use /api (relative) so it works with any Public IP
+  // Respect the public API URL if provided, works both in browser and SSR
+  const publicApiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (publicApiUrl) {
+    return publicApiUrl;
+  }
+
+  // If no public API URL, fallback to relative /api in browser or internal URL in SSR
   if (typeof window !== "undefined") {
     return "/api";
   }
-  // If we are on the server (SSR), use the internal URL or the public one
-  return process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3005/api";
+  return process.env.INTERNAL_API_URL || "http://localhost:3005/api";
 };
 
 const api = axios.create({
