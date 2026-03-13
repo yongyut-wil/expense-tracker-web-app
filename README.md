@@ -2,7 +2,21 @@
 
 แอปพลิเคชันเว็บสำหรับติดตามและจัดการค่าใช้จ่ายส่วนตัว พัฒนาด้วย Next.js, React และ TypeScript
 
-## 🌟 ฟีเจอร์หลัก
+## �️ สถาปัตยกรรมระบบ
+
+โปรเจ็คนี้ประกอบด้วย 2 ส่วนหลัก:
+
+- **Frontend (Repository นี้)**: Next.js Web Application
+- **Backend**: [NestJS API](https://github.com/yongyut-wil/expense-tracker-api) พร้อม PostgreSQL Database
+
+### 🔗 Backend API
+- **Repository**: https://github.com/yongyut-wil/expense-tracker-api
+- **Framework**: NestJS + TypeScript
+- **Database**: PostgreSQL + Prisma ORM
+- **Authentication**: JWT Tokens
+- **API Endpoints**: `/api/auth/*`, `/api/transactions/*`, `/api/users/*`
+
+## � ฟีเจอร์หลัก
 
 ### 💰 การจัดการรายรับ-รายจ่าย
 - บันทึกรายรับและรายจ่ายประจำวัน
@@ -110,8 +124,10 @@ cp env-example .env
 
 แก้ไขไฟล์ `.env` ตามความเหมาะสม:
 ```
-NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
+
+**หมายเหตุ**: Backend API รันที่ port 3000 (จาก NestJS API Repository)
 
 4. รัน Development Server
 ```bash
@@ -120,21 +136,32 @@ yarn dev
 npm run dev
 ```
 
-5. เปิดเบราว์เซอร์ที่ [http://localhost:3000](http://localhost:3000)
+5. เปิดเบราว์เซอร์ที่ [http://localhost:3001](http://localhost:3001)
+
+**หมายเหตุ**: Frontend รันที่ port 3001 เพื่อไม่ให้ชนกับ Backend API ที่ port 3000
 
 ## 🐳 การใช้งานกับ Docker
 
 ### Build Docker Image
 ```bash
-docker build --build-arg NEXT_PUBLIC_API_URL=http://localhost:8000 -t expense-tracker .
+docker build --build-arg NEXT_PUBLIC_API_URL=http://localhost:3000 -t expense-tracker .
 ```
 
 ### รัน Container
 ```bash
-docker run -p 3000:3000 expense-tracker
+docker run -p 3001:3000 expense-tracker
 ```
 
-## 📝 การใช้งาน
+## 📝 การใช้งานระบบ
+
+### ขั้นตอนการเตรียมระบบ
+1. **ติดตั้ง Backend API**: ตาม [NestJS API Repository](https://github.com/yongyut-wil/expense-tracker-api)
+2. **รัน Database**: PostgreSQL พร้อม Prisma Migrations
+3. **รัน Backend API**: `yarn start:dev` ที่ port 3000
+4. **ติดตั้ง Frontend**: ตามขั้นตอนด้านบน
+5. **รัน Frontend**: `yarn dev` ที่ port 3001
+
+### การใช้งานแอปพลิเคชัน
 
 ### 1. สมัครสมาชิกและเข้าสู่ระบบ
 - สร้างบัญชีผู้ใช้ใหม่ผ่านหน้า Register
@@ -211,16 +238,20 @@ npx tsc --noEmit   # ตรวจสอบ TypeScript
    NODE_ENV=production
    ```
 
+4. **Backend Dependencies:**
+   - ต้องมี Backend API รันอยู่ก่อน deploy frontend
+   - Database ต้องพร้อมใช้งาน (PostgreSQL + Prisma Migrations)
+
 #### Docker
 ```bash
 # Build Image
 docker build -t expense-tracker .
 
 # รัน Container
-docker run -p 3000:3000 expense-tracker
+docker run -p 3001:3000 expense-tracker
 
 # รันแบบ Production พร้อม Environment Variables
-docker run -p 3000:3000 \
+docker run -p 3001:3000 \
   -e NEXT_PUBLIC_API_URL=https://your-api.com \
   expense-tracker
 ```
