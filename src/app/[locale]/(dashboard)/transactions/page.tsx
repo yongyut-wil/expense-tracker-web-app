@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { fetcher } from "@/lib/api";
-import { Transaction, ApiResponse } from "@/types";
+import { Transaction, ApiResponse, TransactionType } from "@/types";
 import { Button } from "@/components/ui/button";
-import { PlusIcon, Receipt, Calendar, Tag } from "lucide-react";
+import { PlusIcon, Receipt, Calendar, Tag, MoreVertical, Edit2, Trash2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Dialog,
@@ -29,7 +29,8 @@ import {
   DropdownMenuLabel, 
   DropdownMenuSeparator, 
   DropdownMenuRadioGroup, 
-  DropdownMenuRadioItem 
+  DropdownMenuRadioItem,
+  DropdownMenuItem 
 } from "@/components/ui/dropdown-menu";
 
 import { Input } from "@/components/ui/input";
@@ -64,6 +65,10 @@ export default function TransactionsPage() {
     }
   }
 
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [deletingTransaction, setDeletingTransaction] = useState<Transaction | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   useEffect(() => {
     loadTransactions();
   }, []);
@@ -80,6 +85,28 @@ export default function TransactionsPage() {
   });
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    if (editingTransaction) {
+      form.reset({
+        amount: editingTransaction.amount,
+        title: editingTransaction.title,
+        type: editingTransaction.type,
+        category: editingTransaction.category,
+        date: editingTransaction.date,
+      });
+      setSelectedType(editingTransaction.type);
+    } else {
+      form.reset({
+        amount: 0,
+        title: "",
+        type: "EXPENSE",
+        category: "Food & Dining",
+        date: new Date().toISOString(),
+      });
+      setSelectedType("EXPENSE");
+    }
+  }, [editingTransaction, form]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState("ALL");
   const [sortOrder, setSortOrder] = useState("newest");
@@ -106,17 +133,29 @@ export default function TransactionsPage() {
           ...data,
           type: selectedType,
         };
-        // console.log("Submitting transaction:", payload);
         
-        const response = await api.post<ApiResponse<Transaction>>("/transactions", payload);
-        if (response.data.success) {
-           toast.success(tCommon("save"));
-           setTransactions([response.data.data!, ...transactions]);
-           setIsDialogOpen(false);
-           form.reset();
+        if (editingTransaction) {
+          const response = await api.put<ApiResponse<Transaction>>(`/transactions/${editingTransaction.id}`, payload);
+          if (response.data.success) {
+            toast.success(tCommon("updateSuccess"));
+            setTransactions(prev => prev.map(tx => tx.id === editingTransaction.id ? response.data.data! : tx));
+            setIsDialogOpen(false);
+            setEditingTransaction(null);
+            form.reset();
+          } else {
+            toast.error(response.data.error?.message || "Failed to update transaction");
+          }
         } else {
-           console.error("API Error:", response.data.error);
-           toast.error(response.data.error?.message || "Failed to create transaction");
+          const response = await api.post<ApiResponse<Transaction>>("/transactions", payload);
+          if (response.data.success) {
+             toast.success(tCommon("save"));
+             setTransactions([response.data.data!, ...transactions]);
+             setIsDialogOpen(false);
+             form.reset();
+          } else {
+             console.error("API Error:", response.data.error);
+             toast.error(response.data.error?.message || "Failed to create transaction");
+          }
         }
       } catch (error: any) {
         console.error("Request failed:", error.response?.data || error.message);
@@ -125,6 +164,24 @@ export default function TransactionsPage() {
           || tCommon("error");
         toast.error(errorMessage);
       }
+  }
+
+  async function onDelete() {
+    if (!deletingTransaction) return;
+    try {
+      const response = await api.delete<ApiResponse<null>>(`/transactions/${deletingTransaction.id}`);
+      if (response.data.success) {
+        toast.success(tCommon("deleteSuccess"));
+        setTransactions(prev => prev.filter(tx => tx.id !== deletingTransaction.id));
+        setIsDeleteDialogOpen(false);
+        setDeletingTransaction(null);
+      } else {
+        toast.error(response.data.error?.message || "Failed to delete transaction");
+      }
+    } catch (error: any) {
+      console.error("Delete failed:", error.response?.data || error.message);
+      toast.error(error.response?.data?.error?.message || tCommon("error"));
+    }
   }
 
   const categories = selectedType === "EXPENSE" ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
@@ -139,15 +196,26 @@ export default function TransactionsPage() {
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground mt-1">{t("subtitle")}</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) setEditingTransaction(null);
+        }}>
           <DialogTrigger asChild>
-            <Button className="gap-2 w-full sm:w-auto text-white shadow-lg shadow-indigo-500/20 bg-linear-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 transition-all duration-300">
+            <Button 
+              className="gap-2 w-full sm:w-auto text-white shadow-lg shadow-indigo-500/20 bg-linear-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 transition-all duration-300"
+              onClick={() => {
+                setEditingTransaction(null);
+                setIsDialogOpen(true);
+              }}
+            >
                 <PlusIcon className="h-4 w-4" /> {t("addTransaction")}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle className="text-xl font-bold">{t("form.newTransaction")}</DialogTitle>
+              <DialogTitle className="text-xl font-bold">
+                {editingTransaction ? t("form.editTransaction") : t("form.newTransaction")}
+              </DialogTitle>
             </DialogHeader>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 pt-4">
               {/* Type Toggle */}
@@ -432,10 +500,43 @@ export default function TransactionsPage() {
                             </div>
                         </div>
                         <div className={cn(
-                          "text-base sm:text-lg font-bold transition-transform duration-200 group-hover:scale-105 shrink-0 text-right sm:text-left",
+                          "text-base sm:text-lg font-bold shrink-0 text-right sm:text-left mr-2",
                           tx.type === 'INCOME' ? 'text-emerald-600' : 'text-rose-600'
                         )}>
                             {tx.type === 'INCOME' ? '+' : '-'}{tx.amount.toLocaleString()} {tCommon("thailandBaht")}
+                        </div>
+
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                                  <MoreVertical className="h-4 w-4 text-gray-400" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-32 rounded-xl">
+                                <DropdownMenuItem 
+                                  className="gap-2 cursor-pointer"
+                                  onClick={() => {
+                                    setEditingTransaction(tx);
+                                    setIsDialogOpen(true);
+                                  }}
+                                >
+                                  <Edit2 className="h-3.5 w-3.5" />
+                                  <span>{tCommon("edit")}</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem 
+                                  className="gap-2 text-rose-600 focus:text-rose-600 cursor-pointer"
+                                  onClick={() => {
+                                    setDeletingTransaction(tx);
+                                    setIsDeleteDialogOpen(true);
+                                  }}
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                  <span>{tCommon("delete")}</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
                     </div>
                 );})}
@@ -448,6 +549,40 @@ export default function TransactionsPage() {
             </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden rounded-2xl border-0 shadow-2xl">
+          <div className="p-6">
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-rose-100 mb-4 mx-auto">
+              <AlertCircle className="h-6 w-6 text-rose-600" />
+            </div>
+            <div className="text-center">
+              <DialogTitle className="text-xl font-bold text-gray-900 mb-2">
+                {tCommon("confirmDelete")}
+              </DialogTitle>
+              <p className="text-gray-500 text-sm">
+                {tCommon("deleteDescription")}
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-3 p-4 bg-gray-50 mt-2">
+            <Button 
+              variant="outline" 
+              className="flex-1 rounded-xl border-gray-200 hover:bg-white"
+              onClick={() => setIsDeleteDialogOpen(false)}
+            >
+              {tCommon("cancel")}
+            </Button>
+            <Button 
+              className="flex-1 rounded-xl bg-rose-600 hover:bg-rose-700 text-white shadow-lg shadow-rose-200"
+              onClick={onDelete}
+            >
+              {tCommon("delete")}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

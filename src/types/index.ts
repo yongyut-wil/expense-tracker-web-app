@@ -1,3 +1,8 @@
+export enum TransactionType {
+  INCOME = 'INCOME',
+  EXPENSE = 'EXPENSE',
+}
+
 // API Response Structure
 export interface ApiResponse<T> {
   success: boolean;
@@ -5,6 +10,7 @@ export interface ApiResponse<T> {
   error: {
     code: string;
     message: string;
+    details?: any;
   } | null;
   meta: {
     timestamp: string;
@@ -25,10 +31,26 @@ export interface Transaction {
   id: number;
   title: string;
   amount: number;
-  type: 'INCOME' | 'EXPENSE';
+  type: TransactionType;
   category: string;
-  date: string;
+  date: string; // ISO Date string
   userId: number;
+}
+
+export interface CreateTransactionDto {
+  title: string;
+  amount: number;
+  type: TransactionType;
+  category: string;
+  date?: string;
+}
+
+export interface UpdateTransactionDto {
+  title?: string;
+  amount?: number;
+  type?: TransactionType;
+  category?: string;
+  date?: string;
 }
 
 export interface DashboardData {

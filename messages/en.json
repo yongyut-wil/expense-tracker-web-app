@@ -9,7 +9,13 @@
     "noData": "No transactions yet",
     "thailandBaht": "฿",
     "sessionExpired": "Session expired, please login again",
-    "guestUser": "Guest User"
+    "guestUser": "Guest User",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Are you sure ?",
+    "deleteDescription": "This action cannot be undone.",
+    "deleteSuccess": "Transaction deleted",
+    "updateSuccess": "Transaction updated"
   },
   "Metadata": {
     "title": "Expense Tracker",
@@ -112,7 +118,8 @@
         "amountPositive": "Amount must be positive",
         "titleRequired": "Title is required",
         "dateRequired": "Date is required"
-      }
+      },
+      "editTransaction": "Edit Transaction"
     },
     "noResults": "No results found",
     "startFirst": "Start recording your first transaction today"
