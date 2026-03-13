@@ -198,8 +198,6 @@ export default function TransactionsPage() {
     }
   }
 
-  // const categories = selectedType === "EXPENSE" ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
-
   return (
     <div className="space-y-6">
       {/* Header */}
