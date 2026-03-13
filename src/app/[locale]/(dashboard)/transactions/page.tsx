@@ -73,6 +73,17 @@ export default function TransactionsPage() {
     loadTransactions();
   }, []);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterType, setFilterType] = useState("ALL");
+  const [sortOrder, setSortOrder] = useState("newest");
+  const [selectedType, setSelectedType] = useState<"EXPENSE" | "INCOME">("EXPENSE");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Helper to normalize local date to 00:00 UTC
+  const toUTCDate = (date: Date) => {
+    return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())).toISOString();
+  };
+
   const form = useForm<TransactionInput>({
     resolver: zodResolver(transactionSchema),
     defaultValues: {
@@ -80,11 +91,9 @@ export default function TransactionsPage() {
       title: "",
       type: "EXPENSE",
       category: "Food & Dining",
-      date: new Date().toISOString(),
+      date: toUTCDate(new Date()),
     }
   });
-
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     if (editingTransaction) {
@@ -102,15 +111,13 @@ export default function TransactionsPage() {
         title: "",
         type: "EXPENSE",
         category: "Food & Dining",
-        date: new Date().toISOString(),
+        date: toUTCDate(new Date()),
       });
       setSelectedType("EXPENSE");
     }
   }, [editingTransaction, form]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterType, setFilterType] = useState("ALL");
-  const [sortOrder, setSortOrder] = useState("newest");
-  const [selectedType, setSelectedType] = useState<"EXPENSE" | "INCOME">("EXPENSE");
+
+  const categories = selectedType === "EXPENSE" ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
 
   const filteredTransactions = transactions
     .filter(tx => {
@@ -132,6 +139,8 @@ export default function TransactionsPage() {
         const payload = {
           ...data,
           type: selectedType,
+          // Ensure date is normalized to UTC 00:00 of the selected local day
+          date: toUTCDate(new Date(data.date))
         };
         
         if (editingTransaction) {
@@ -184,7 +193,7 @@ export default function TransactionsPage() {
     }
   }
 
-  const categories = selectedType === "EXPENSE" ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
+  // const categories = selectedType === "EXPENSE" ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
 
   return (
     <div className="space-y-6">
