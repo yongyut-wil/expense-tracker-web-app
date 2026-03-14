@@ -9,7 +9,7 @@ COPY . .
 COPY --from=deps /app/node_modules ./node_modules
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-RUN yarn build
+RUN yarn build --no-turbo
 
 FROM node:22-alpine AS runner
 WORKDIR /app
