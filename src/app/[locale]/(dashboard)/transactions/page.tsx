@@ -535,7 +535,7 @@ export default function TransactionsPage() {
                             {tx.type === 'INCOME' ? '+' : '-'}{tx.amount.toLocaleString()} {tCommon("thailandBaht")}
                         </div>
 
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <div className="flex items-center gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
