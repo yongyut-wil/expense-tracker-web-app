@@ -21,13 +21,12 @@ import { useAuthStore } from "@/stores/auth-store";
 import { useRouter, Link } from "@/i18n/routing";
 import { ApiResponse, AuthResponse } from "@/types";
 import { TrendingUp, Mail, Lock, Loader2, AlertCircle } from "lucide-react";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 export default function LoginPage() {
   const t = useTranslations("Auth");
   const tCommon = useTranslations("Common");
-  const locale = useLocale();
   const router = useRouter();
   const login = useAuthStore((state) => state.login);
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -149,7 +148,7 @@ export default function LoginPage() {
                       </div>
                     </FormControl>
                     <FormMessage className="text-red-500">
-                      {fieldState.error && t(fieldState.error.message as any)}
+                      {fieldState.error && t(fieldState.error.message as keyof typeof t)}
                     </FormMessage>
                   </FormItem>
                 )}
@@ -180,7 +179,7 @@ export default function LoginPage() {
                       </div>
                     </FormControl>
                     <FormMessage className="text-red-500">
-                      {fieldState.error && t(fieldState.error.message as any)}
+                      {fieldState.error && t(fieldState.error.message as keyof typeof t)}
                     </FormMessage>
                   </FormItem>
                 )}

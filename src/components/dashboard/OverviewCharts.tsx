@@ -4,12 +4,55 @@ import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, PieChartIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { getCategoryConfig } from '@/lib/categories';
-
-
 
 // Theme-consistent colors (Indigo/Violet palette)
 const COLORS = ['#6366f1', '#8b5cf6', '#a855f7', '#c084fc'];
+
+// Custom tooltip component - moved outside render to prevent recreation
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    color?: string;
+    value: number;
+    name: string;
+    payload?: {
+      name?: string;
+      income?: number;
+      expense?: number;
+    };
+  }>;
+  label?: string;
+}
+
+const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label }) => {
+  const tCat = useTranslations("Categories");
+  const tCommon = useTranslations("Common");
+  
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white/95 backdrop-blur-sm border border-gray-200 rounded-xl shadow-lg p-3">
+        <p className="font-semibold text-gray-900 mb-2">{label}</p>
+        {payload.map((entry, index: number) => {
+          // Determine if this is a pie chart entry (which has category IDs) or a bar chart entry
+          const isPieChart = entry.payload && entry.payload.name && !('income' in entry.payload);
+          const displayName = isPieChart ? tCat(entry.name as string) : entry.name;
+          
+          return (
+            <div key={index} className="flex items-center gap-2 text-sm">
+              <div
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: entry.color }}
+              />
+              <span className="text-gray-600">{displayName}:</span>
+              <span className="font-semibold text-gray-900">{tCommon("thailandBaht")}{entry.value.toLocaleString()}</span>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+  return null;
+};
 
 export interface OverviewChartsProps {
   pieData?: { name: string; value: number }[];
@@ -22,33 +65,6 @@ export function OverviewCharts({ pieData = [], barData = [] }: OverviewChartsPro
   const tCat = useTranslations("Categories");
   const tCommon = useTranslations("Common");
 
-  // Custom tooltip component
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white/95 backdrop-blur-sm border border-gray-200 rounded-xl shadow-lg p-3">
-          <p className="font-semibold text-gray-900 mb-2">{label}</p>
-          {payload.map((entry: any, index: number) => {
-            // Determine if this is a pie chart entry (which has category IDs) or a bar chart entry
-            const isPieChart = entry.payload && entry.payload.name && !('income' in entry.payload);
-            const displayName = isPieChart ? tCat(entry.name as any) : entry.name;
-            
-            return (
-              <div key={index} className="flex items-center gap-2 text-sm">
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: entry.color }}
-                />
-                <span className="text-gray-600">{displayName}:</span>
-                <span className="font-semibold text-gray-900">{tCommon("thailandBaht")}{entry.value.toLocaleString()}</span>
-              </div>
-            );
-          })}
-        </div>
-      );
-    }
-    return null;
-  };
 
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
@@ -150,7 +166,7 @@ export function OverviewCharts({ pieData = [], barData = [] }: OverviewChartsPro
                 nameKey="name"
                 strokeWidth={0}
               >
-                {pieData.map((entry: any, index: number) => (
+                {pieData.map((entry, index: number) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={`url(#pieGradient${index % COLORS.length})`}
@@ -164,8 +180,8 @@ export function OverviewCharts({ pieData = [], barData = [] }: OverviewChartsPro
                 height={50}
                 formatter={(value) => {
                   try {
-                    return <span className="text-gray-600 text-sm">{tCat(value as any)}</span>;
-                  } catch (e) {
+                    return <span className="text-gray-600 text-sm">{tCat(value as string)}</span>;
+                  } catch {
                     return <span className="text-gray-600 text-sm">{value}</span>;
                   }
                 }}

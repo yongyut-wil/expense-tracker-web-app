@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { fetcher } from "@/lib/api";
-import { DashboardData, Transaction } from "@/types";
+import { Transaction, DashboardData } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowDownIcon, ArrowUpIcon, WalletIcon, Plus, TrendingUp, TrendingDown } from "lucide-react";
@@ -13,10 +13,11 @@ import { format } from "date-fns";
 import { th, enUS } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
 import { AnimatedNumber } from "@/components/ui/animated-number";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { getCategoryConfig } from "@/lib/categories";
 import dayjs from "dayjs";
 import { toast } from "sonner";
+import { useLocale } from "next-intl"; // Add missing dependency
 
 // Animation variants
 const containerVariants = {
@@ -45,7 +46,10 @@ const itemVariants = {
 export default function DashboardPage() {
   const t = useTranslations("Dashboard");
   const tCommon = useTranslations("Common");
-  const locale = useLocale() as 'en' | 'th';
+  const locale = useLocale() as 'en' | 'th'; // Ensure that the incoming `locale` is valid
+  if (!['en', 'th'].includes(locale)) {
+    throw new Error(`Invalid locale: ${locale}`);
+  }
   const months = t.raw("months") as string[];
   
   const [data, setData] = useState<DashboardData | null>(null);
@@ -73,7 +77,7 @@ export default function DashboardPage() {
   };
 
   // Process pie chart data (expense by category for current month)
-  const processPieData = (transactions: Transaction[]) => {
+  const processPieData = useCallback((transactions: Transaction[]) => {
     const expensesByCategory: { [key: string]: number } = {};
     
     transactions
@@ -94,10 +98,10 @@ export default function DashboardPage() {
       name,
       value
     }));
-  };
+  }, []);
 
   // Process bar chart data (income vs expense for last 6 months)
-  const processBarData = (transactions: Transaction[]) => {
+  const processBarData = useCallback((transactions: Transaction[]) => {
     const monthlyData: { [key: string]: { income: number; expense: number } } = {};
     
     transactions.forEach(t => {
@@ -131,7 +135,7 @@ export default function DashboardPage() {
     }
     
     return result;
-  };
+  }, [months]);
 
   useEffect(() => {
     async function loadDashboard() {
@@ -185,7 +189,7 @@ export default function DashboardPage() {
     }
     
     loadChartData();
-  }, [t]);
+  }, [t, processBarData, processPieData]);
 
   if (loading) {
     return (

@@ -55,7 +55,7 @@ export const useAuthStore = create<AuthState>()(
           } else {
             set({ isLoading: false });
           }
-        } catch (error) {
+        } catch {
           // Token might be invalid/expired - handled by api interceptor
           set({ isLoading: false });
         }

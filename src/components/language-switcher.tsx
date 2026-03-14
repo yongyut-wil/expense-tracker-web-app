@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/routing";
 import {
   DropdownMenu,
@@ -13,7 +13,6 @@ import { Languages } from "lucide-react";
 import { useParams } from "next/navigation";
 
 export function LanguageSwitcher() {
-  const t = useTranslations("Navigation");
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -21,7 +20,7 @@ export function LanguageSwitcher() {
 
   const toggleLanguage = (newLocale: "en" | "th") => {
     router.replace(
-      // @ts-ignore
+      // @ts-expect-error - Next.js router types are incompatible with i18n routing
       { pathname, params },
       { locale: newLocale }
     );

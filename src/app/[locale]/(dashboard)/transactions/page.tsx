@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { fetcher } from "@/lib/api";
-import { Transaction, ApiResponse, TransactionType } from "@/types";
+import { Transaction, ApiResponse } from "@/types";
 import { Button } from "@/components/ui/button";
 import { PlusIcon, Receipt, Calendar, Tag, MoreVertical, Edit2, Trash2, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";

@@ -18,14 +18,12 @@ import { toast } from "sonner";
 import api from "@/lib/api";
 import { useRouter, Link } from "@/i18n/routing";
 import { ApiResponse } from "@/types";
-import { Wallet, User, Mail, Lock, ShieldCheck, Loader2, CheckCircle2, Eye, EyeOff } from "lucide-react";
+import { Wallet, User, Mail, Lock, ShieldCheck, Loader2, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 
 export default function RegisterPage() {
   const t = useTranslations("Auth");
-  const tCommon = useTranslations("Common");
-  const locale = useLocale();
   const router = useRouter();
   const [passwordStrength, setPasswordStrength] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
@@ -89,8 +87,9 @@ export default function RegisterPage() {
       } else {
         toast.error(response.data.error?.message || "Registration failed");
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.error?.message || t("registerFailed"));
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { error?: { message?: string } } } };
+      toast.error(axiosError.response?.data?.error?.message || t("registerFailed"));
     }
   }
 
@@ -139,7 +138,7 @@ export default function RegisterPage() {
                       </div>
                     </FormControl>
                     <FormMessage className="text-red-500">
-                      {fieldState.error && t(fieldState.error.message as any)}
+                      {fieldState.error && t(fieldState.error.message as keyof typeof t)}
                     </FormMessage>
                   </FormItem>
                 )}
@@ -161,7 +160,7 @@ export default function RegisterPage() {
                       </div>
                     </FormControl>
                     <FormMessage className="text-red-500">
-                      {fieldState.error && t(fieldState.error.message as any)}
+                      {fieldState.error && t(fieldState.error.message as keyof typeof t)}
                     </FormMessage>
                   </FormItem>
                 )}
@@ -217,7 +216,7 @@ export default function RegisterPage() {
                       </div>
                     )}
                     <FormMessage className="text-red-500">
-                      {fieldState.error && t(fieldState.error.message as any)}
+                      {fieldState.error && t(fieldState.error.message as keyof typeof t)}
                     </FormMessage>
                   </FormItem>
                 )}
@@ -251,7 +250,7 @@ export default function RegisterPage() {
                       </div>
                     </FormControl>
                     <FormMessage className="text-red-500">
-                      {fieldState.error && t(fieldState.error.message as any)}
+                      {fieldState.error && t(fieldState.error.message as keyof typeof t)}
                     </FormMessage>
                   </FormItem>
                 )}
