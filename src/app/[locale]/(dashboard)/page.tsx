@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { fetcher } from "@/lib/api";
-import { DashboardData } from "@/types";
+import { DashboardData, Transaction } from "@/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowDownIcon, ArrowUpIcon, WalletIcon, Plus, TrendingUp, TrendingDown } from "lucide-react";
@@ -16,17 +16,7 @@ import { AnimatedNumber } from "@/components/ui/animated-number";
 import { useTranslations, useLocale } from "next-intl";
 import { getCategoryConfig } from "@/lib/categories";
 import dayjs from "dayjs";
-
-
-interface Transaction {
-  id: number;
-  title: string;
-  amount: number;
-  type: 'INCOME' | 'EXPENSE';
-  category: string;
-  date: string;
-  userId: number;
-}
+import { toast } from "sonner";
 
 // Animation variants
 const containerVariants = {
@@ -63,6 +53,7 @@ export default function DashboardPage() {
   const [pieData, setPieData] = useState<OverviewChartsProps['pieData']>([]);
   const [barData, setBarData] = useState<OverviewChartsProps['barData']>([]);
   const [chartsLoading, setChartsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const user = useAuthStore((state) => state.user);
 
   // Helper function to get date range for current month
@@ -145,23 +136,27 @@ export default function DashboardPage() {
   useEffect(() => {
     async function loadDashboard() {
       try {
+        setError(null);
         const dashboardData = await fetcher<DashboardData>("/transactions/dashboard");
         if (dashboardData) {
           setData(dashboardData);
         }
       } catch (error) {
         console.error("Failed to load dashboard data", error);
+        setError(t("errorLoadingDashboard"));
+        toast.error(t("errorLoadingDashboard"));
       } finally {
         setLoading(false);
       }
     }
     loadDashboard();
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     async function loadChartData() {
       try {
         setChartsLoading(true);
+        setError(null);
         
         // Single API call: fetch last 6 months data for both charts
         const last6Months = getLast6MonthsRange();
@@ -182,13 +177,15 @@ export default function DashboardPage() {
         }
       } catch (error) {
         console.error("Failed to load chart data", error);
+        setError(t("errorLoadingCharts"));
+        toast.error(t("errorLoadingCharts"));
       } finally {
         setChartsLoading(false);
       }
     }
     
     loadChartData();
-  }, []);
+  }, [t]);
 
   if (loading) {
     return (
@@ -202,6 +199,20 @@ export default function DashboardPage() {
           <Skeleton className="h-32 rounded-2xl" />
           <Skeleton className="h-32 rounded-2xl" />
         </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+        <div className="text-center space-y-2">
+          <h3 className="text-lg font-semibold text-foreground">{t("errorTitle")}</h3>
+          <p className="text-muted-foreground">{error}</p>
+        </div>
+        <Button onClick={() => window.location.reload()} variant="outline">
+          {t("retry")}
+        </Button>
       </div>
     );
   }

@@ -10,7 +10,7 @@ export interface ApiResponse<T> {
   error: {
     code: string;
     message: string;
-    details?: any;
+    details?: unknown;
   } | null;
   meta: {
     timestamp: string;
@@ -30,6 +30,7 @@ export interface User {
 export interface Transaction {
   id: number;
   title: string;
+  titleEn?: string;
   amount: number;
   type: TransactionType;
   category: string;
@@ -39,6 +40,7 @@ export interface Transaction {
 
 export interface CreateTransactionDto {
   title: string;
+  titleEn?: string;
   amount: number;
   type: TransactionType;
   category: string;
@@ -47,6 +49,7 @@ export interface CreateTransactionDto {
 
 export interface UpdateTransactionDto {
   title?: string;
+  titleEn?: string;
   amount?: number;
   type?: TransactionType;
   category?: string;

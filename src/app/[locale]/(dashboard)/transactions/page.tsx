@@ -82,6 +82,7 @@ export default function TransactionsPage() {
   const [sortOrder, setSortOrder] = useState("newest");
   const [selectedType, setSelectedType] = useState<"EXPENSE" | "INCOME">("EXPENSE");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   // Helper to normalize local date to 00:00 UTC
   const toUTCDate = (date: string | Date) => {
@@ -95,7 +96,7 @@ export default function TransactionsPage() {
       amount: 0,
       title: "",
       type: "EXPENSE",
-      category: "Food & Dining",
+      category: "Other",
       date: toUTCDate(new Date()),
     }
   });
@@ -115,7 +116,7 @@ export default function TransactionsPage() {
         amount: 0,
         title: "",
         type: "EXPENSE",
-        category: "Food & Dining",
+        category: "Other",
         date: toUTCDate(new Date()),
       });
       setSelectedType("EXPENSE");
@@ -171,11 +172,17 @@ export default function TransactionsPage() {
              toast.error(response.data.error?.message || "Failed to create transaction");
           }
         }
-      } catch (error: any) {
-        console.error("Request failed:", error.response?.data || error.message);
-        const errorMessage = error.response?.data?.error?.message 
-          || error.response?.data?.message 
-          || tCommon("error");
+      } catch (error: unknown) {
+        console.error("Request failed:", error);
+        let errorMessage = tCommon("error");
+        
+        if (error && typeof error === 'object' && 'response' in error) {
+          const response = error.response as { data?: { error?: { message?: string }; message?: string } };
+          errorMessage = response?.data?.error?.message 
+            || response?.data?.message 
+            || tCommon("error");
+        }
+        
         toast.error(errorMessage);
       }
   }
@@ -192,9 +199,18 @@ export default function TransactionsPage() {
       } else {
         toast.error(response.data.error?.message || "Failed to delete transaction");
       }
-    } catch (error: any) {
-      console.error("Delete failed:", error.response?.data || error.message);
-      toast.error(error.response?.data?.error?.message || tCommon("error"));
+    } catch (error: unknown) {
+      console.error("Delete failed:", error);
+      let errorMessage = tCommon("error");
+      
+      if (error && typeof error === 'object' && 'response' in error) {
+        const response = error.response as { data?: { error?: { message?: string }; message?: string } };
+        errorMessage = response?.data?.error?.message 
+          || response?.data?.message 
+          || tCommon("error");
+      }
+      
+      toast.error(errorMessage);
     }
   }
 
@@ -268,7 +284,7 @@ export default function TransactionsPage() {
                   {...form.register("title")} 
                 />
                 {form.formState.errors.title && (
-                  <p className="text-xs text-red-500">{t(`form.${form.formState.errors.title.message}` as any)}</p>
+                  <p className="text-xs text-red-500">{t(`form.${form.formState.errors.title.message}`)}</p>
                 )}
               </div>
 
@@ -310,7 +326,7 @@ export default function TransactionsPage() {
                   />
                 </div>
                 {form.formState.errors.amount && (
-                  <p className="text-xs text-red-500">{t(`form.${form.formState.errors.amount.message}` as any)}</p>
+                  <p className="text-xs text-red-500">{t(`form.${form.formState.errors.amount.message}`)}</p>
                 )}
               </div>
 
@@ -321,7 +337,6 @@ export default function TransactionsPage() {
                     control={form.control}
                     name="date"
                     render={({ field }) => {
-                      const [isCalendarOpen, setIsCalendarOpen] = React.useState(false);
                       return (
                       <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                         <PopoverTrigger asChild>
@@ -356,7 +371,7 @@ export default function TransactionsPage() {
                     );}}
                   />
                  {form.formState.errors.date && (
-                    <p className="text-xs text-red-500">{t(`form.${form.formState.errors.date.message}` as any)}</p>
+                    <p className="text-xs text-red-500">{t(`form.${form.formState.errors.date.message}`)}</p>
                  )}
               </div>
 
@@ -371,7 +386,7 @@ export default function TransactionsPage() {
                     <SelectValue placeholder={t("form.selectCategory")} />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((cat: any) => {
+                    {categories.map((cat: { id: string; label: string; icon: React.ElementType; color: string; bg: string }) => {
                       const Icon = cat.icon;
                       return (
                         <SelectItem key={cat.id} value={cat.label} className="py-2.5">
@@ -495,7 +510,9 @@ export default function TransactionsPage() {
                                 <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="font-medium text-gray-900 truncate">{tx.title}</p>
+                                <p className="font-medium text-gray-900 truncate">
+                                    {locale === 'th' && tx.titleEn ? tx.title : tx.titleEn || tx.title}
+                                </p>
                                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm text-gray-500 mt-0.5">
                                   <div className="flex items-center gap-1">
                                     <Calendar className="h-3 w-3 sm:h-3.5 sm:w-3.5" />

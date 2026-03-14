@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "@/components/language-switcher";
 
@@ -25,7 +25,7 @@ interface NavItem {
   icon: React.ElementType;
 }
 
-const getNavItems = (t: any): NavItem[] => [
+const getNavItems = (t: (key: string) => string): NavItem[] => [
   {
     title: t("overview"),
     href: "/",
@@ -51,18 +51,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+
+  // Check if client-side hydration is complete
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setHydrated(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Fetch user info on mount
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
 
-  // Auth Guard
+  // Auth Guard - only run after hydration
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (hydrated && !isLoading && !isAuthenticated) {
       router.push("/login");
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, router, hydrated]);
 
   const handleLogout = () => {
     logout();
@@ -74,91 +83,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (!name) return "U";
     return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
   };
-
-  const NavContent = () => (
-    <div className="flex h-full flex-col">
-      {/* Logo */}
-      <div className="flex h-16 items-center border-b border-gray-100 px-6">
-        <Link href="/" className="flex items-center gap-3 font-bold text-xl" onClick={() => setOpen(false)}>
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-linear-to-br from-indigo-500 to-violet-600 shadow-md shadow-indigo-500/20">
-            <TrendingUp className="h-5 w-5 text-white" />
-          </div>
-          <span className="text-foreground">
-            {tCommon("appName")}
-          </span>
-        </Link>
-      </div>
-
-      {/* Navigation */}
-      <div className="flex-1 overflow-auto py-6 px-4">
-        <nav className="space-y-1">
-          {navItems.map((item, index) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={index}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                className={cn(
-                  "group relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 focus:outline-none",
-                  isActive 
-                    ? "text-primary" 
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {isActive && (
-                  <motion.div
-                    layoutId="activeNavNavContent"
-                    className="absolute inset-0 rounded-lg bg-secondary z-0"
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  />
-                )}
-                <div className={cn(
-                  "relative z-10 flex h-9 w-9 items-center justify-center rounded-md transition-all duration-200",
-                  isActive 
-                    ? "bg-primary text-white" 
-                    : "bg-transparent group-hover:bg-muted"
-                )}>
-                  <item.icon className={cn(
-                    "h-5 w-5 transition-colors",
-                    isActive ? "text-white" : "text-muted-foreground group-hover:text-foreground"
-                  )} />
-                </div>
-                <span className="relative z-10 flex-1">{item.title}</span>
-                {isActive && (
-                  <motion.div 
-                    layoutId="activeDotNavContent"
-                    className="relative z-10 h-1.5 w-1.5 rounded-full bg-primary" 
-                  />
-                )}
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
-
-      {/* User Section */}
-      <div className="mt-auto border-t border-gray-100 p-4">
-        <div className="mb-3 flex items-center gap-3 rounded-xl bg-gray-50 p-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-white">
-            {getInitials(user?.name ?? undefined)}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">{user?.name || tCommon("guestUser")}</p>
-            <p className="text-xs text-gray-500 truncate">{user?.email || "user@email.com"}</p>
-          </div>
-        </div>
-        <Button 
-          variant="ghost" 
-          className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-lg h-11 transition-all duration-200"
-          onClick={handleLogout}
-        >
-          <LogOut className="h-5 w-5" />
-          {tCommon("logout")}
-        </Button>
-      </div>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-gray-50/80">
