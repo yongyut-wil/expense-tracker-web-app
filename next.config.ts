@@ -7,9 +7,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   output: "standalone",
   reactStrictMode: false,
-  experimental: {
-    serverComponentsExternalPackages: [],
-  },
+  serverExternalPackages: [],
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals.push({

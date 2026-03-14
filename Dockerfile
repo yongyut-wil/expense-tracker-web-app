@@ -9,7 +9,7 @@ COPY . .
 COPY --from=deps /app/node_modules ./node_modules
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-RUN rm -rf .next && yarn build
+RUN rm -rf .next node_modules/.cache && yarn install --frozen-lockfile && yarn build
 
 FROM node:22-alpine AS runner
 WORKDIR /app
