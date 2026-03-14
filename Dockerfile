@@ -1,9 +1,9 @@
-FROM node:22-alpine AS deps
+FROM --platform=linux/arm64 node:22-alpine AS deps
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
-FROM node:22-alpine AS builder
+FROM --platform=linux/arm64 node:22-alpine AS builder
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
@@ -18,7 +18,7 @@ ENV NODE_ENV=production
 # Clean build without cache issues
 RUN yarn build
 
-FROM node:22-alpine AS runner
+FROM --platform=linux/arm64 node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
