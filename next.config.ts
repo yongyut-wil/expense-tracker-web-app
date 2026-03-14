@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
   output: "standalone",
   reactStrictMode: false,
   serverExternalPackages: [],
+  experimental: {
+    serverComponentsExternalPackages: ['sharp'],
+  },
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.externals.push({
